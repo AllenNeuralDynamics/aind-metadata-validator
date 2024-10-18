@@ -22,10 +22,10 @@ def validate_core_metadata(core_file_name: str, data: dict) -> MetadataState:
     ValueError
         _description_
     """
-    expected_class = FIRST_LAYER_MAPPING.get(core_file_name, None)
-
-    if not expected_class:
+    if core_file_name not in FIRST_LAYER_MAPPING:
         raise ValueError(f"Invalid core file name: {core_file_name}")
+
+    expected_class = FIRST_LAYER_MAPPING[core_file_name]
 
     try:
         expected_class(**data)

@@ -19,37 +19,31 @@ EXTRA_FIELDS = [
 ]
 
 
-def gen_first_layer_mapping(model_class):
+def gen_first_layer_mapping():
     """Generate a mapping of the first layer of metadata models
-
-    Parameters
-    ----------
-    model_class : _type_
-        _description_
     """
     mapping = {}
-    for field_name, field_type in model_class.__annotations__.items():
+    for field_name, field_type in Metadata.__annotations__.items():
 
         if field_name in CORE_FILES:
+
             # If the type is Union it's because it was set as Optional[Class],
             # so we grab just the class and drop the None
             if getattr(field_type, '__origin__') is Union:
                 field_type = get_args(field_type)[0]
-            elif isinstance(field_type, type):
-                mapping[field_name] = field_type
-            else:
-                raise ValueError(f"Field type {field_type} is not a class or primitive type")
+
+            mapping[field_name] = field_type
 
     return mapping
 
 
 def gen_second_layer_mapping(model_class_list):
-    """_summary_
+    """Generate a mapping of the second layer of metadata models
 
     Parameters
     ----------
-    model_class : _type_
-        _description_
+    model_class : Class
+        Metadata core class to generate sub-fields from
     """
     mappings = {}
 
@@ -66,7 +60,7 @@ def gen_second_layer_mapping(model_class_list):
     return mappings
 
 
-FIRST_LAYER_MAPPING = gen_first_layer_mapping(Metadata)
+FIRST_LAYER_MAPPING = gen_first_layer_mapping()
 
 SECOND_LAYER_MAPPING = gen_second_layer_mapping([
     Acquisition,
