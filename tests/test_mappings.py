@@ -3,7 +3,7 @@
 import unittest
 from aind_metadata_validator.mappings import FIRST_LAYER_MAPPING, SECOND_LAYER_MAPPING
 from aind_data_schema.core.acquisition import Acquisition
-from typing import Optional, List
+from typing import Optional, List, Literal
 
 
 class CoreValidatorTest(unittest.TestCase):
@@ -18,6 +18,7 @@ class CoreValidatorTest(unittest.TestCase):
         self.assertEqual(SECOND_LAYER_MAPPING["acquisition"]["protocol_id"], List[str])
         self.assertEqual(SECOND_LAYER_MAPPING["acquisition"]["specimen_id"], str)
         self.assertEqual(SECOND_LAYER_MAPPING["acquisition"]["notes"], Optional[str])
+        self.assertEqual(SECOND_LAYER_MAPPING["data_description"]["license"], Literal['CC-BY-4.0'])
 
 
 if __name__ == "__main__":

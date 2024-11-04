@@ -27,6 +27,10 @@ def validate_core_metadata(core_file_name: str, data: dict) -> MetadataState:
 
     expected_class = FIRST_LAYER_MAPPING[core_file_name]
 
+    # Check for missing data
+    if not data or data == "" or data == {} or data == []:
+        return MetadataState.MISSING
+
     try:
         expected_class(**data)
         return MetadataState.VALID

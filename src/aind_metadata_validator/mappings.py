@@ -55,7 +55,7 @@ def gen_second_layer_mapping(model_class_list):
 
             mapping[field_name] = field_type
 
-        mappings[model_class.__name__.lower()] = mapping
+        mappings[model_class.default_filename().replace(".json", "")] = mapping
 
     return mappings
 
