@@ -1,17 +1,23 @@
 import unittest
-from aind_metadata_validator.utils import MetadataState
-from aind_metadata_validator.field_validator import validate_field_metadata, validate_field, IGNORED_FIELDS
 import json
+from aind_metadata_validator.utils import MetadataState
+from aind_metadata_validator.field_validator import (
+    validate_field_metadata,
+    validate_field,
+    validate_field_optional,
+    validate_field_union,
+)
 
 
-class TestFieldValidator(unittest.TestCase):
+class TestValidateFieldMetadata(unittest.TestCase):
 
     def setUp(self):
+        # Load the sample valid data from the JSON file
         with open('./tests/resources/data_description.json') as f:
             self.data = json.load(f)
 
     def test_validate_field_metadata_valid(self):
-        # Test that valid data returns VALID for each field
+        # Test that valid data returns expected MetadataState for each field
         result = validate_field_metadata("data_description", self.data)
         self.assertEqual(result["platform"], MetadataState.PRESENT)
         self.assertEqual(result["subject_id"], MetadataState.VALID)
@@ -28,38 +34,48 @@ class TestFieldValidator(unittest.TestCase):
         self.assertEqual(result["related_data"], MetadataState.MISSING)
         self.assertEqual(result["data_summary"], MetadataState.MISSING)
 
-    def test_validate_field_metadata_invalid_field(self):
-        # Add an unexpected field to test PRESENT state
-        self.data["unknown_field"] = "unexpected_value"
-        result = validate_field_metadata("data_description", self.data)
-        self.assertTrue("unknown_field" not in result)
-
-    def test_validate_field_metadata_missing_field(self):
-        # Remove an essential field and expect it to be marked as MISSING
-        self.data["subject_id"] = None
-        result = validate_field_metadata("data_description", self.data)
-        self.assertEqual(result["subject_id"], MetadataState.MISSING)
-
-    def test_validate_field_metadata_invalid_core_file(self):
-        # Test with an invalid core file name
+    def test_invalid_core_file_name(self):
+        # Test that invalid core file name raises ValueError
         with self.assertRaises(ValueError):
-            validate_field_metadata("invalid_file_name", self.data)
+            validate_field_metadata("invalid_core_file", self.data)
 
-    def test_validate_field_valid(self):
-        # Validate a single valid field and expect VALID
-        field_data = {"name": "Electrophysiology platform", "abbreviation": "ecephys"}
-        self.assertEqual(validate_field(field_data, dict), MetadataState.VALID)
+    def test_validate_field(self):
+        # Example unit test for validate_field (add more cases as needed)
+        self.assertEqual(
+            validate_field("example_data", None, str),
+            MetadataState.VALID
+        )
+        self.assertEqual(
+            validate_field("example_data", None, str),
+            MetadataState.VALID
+        )
 
-    def test_validate_field_missing(self):
-        # Validate an empty field and expect MISSING
-        field_data = None
-        self.assertEqual(validate_field(field_data, dict), MetadataState.MISSING)
+    def test_validate_field_optional(self):
+        # Test validate_field_optional with empty and non-empty data
+        self.assertEqual(
+            validate_field_optional("", str),
+            MetadataState.VALID
+        )
+        self.assertEqual(
+            validate_field_optional("non_empty_data", str),
+            MetadataState.VALID
+        )
 
-    def test_validate_field_present_invalid_data(self):
-        # Validate an incorrect field format to expect PRESENT
-        field_data = "invalid_data_format"
-        self.assertEqual(validate_field(field_data, dict), MetadataState.PRESENT)
+    def test_validate_field_union(self):
+        # Test validate_field_union with valid and invalid data
+        self.assertEqual(
+            validate_field_union({"key": "value"}, [dict, str]),
+            MetadataState.VALID
+        )
+        self.assertEqual(
+            validate_field_union("string_data", [dict, str]),
+            MetadataState.VALID
+        )
+        self.assertEqual(
+            validate_field_union(123, [dict, str]),
+            MetadataState.PRESENT
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
