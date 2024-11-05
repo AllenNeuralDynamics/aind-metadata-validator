@@ -1,4 +1,3 @@
-
 # First level metadata models
 from typing import Annotated, get_args, Union, get_origin
 
@@ -14,14 +13,13 @@ from aind_data_schema.core.session import Session
 from aind_data_schema.core.subject import Subject
 
 EXTRA_FIELDS = [
-    'describedBy',
-    'schema_version',
+    "describedBy",
+    "schema_version",
 ]
 
 
 def gen_first_layer_mapping():
-    """Generate a mapping of the first layer of metadata models
-    """
+    """Generate a mapping of the first layer of metadata models"""
     mapping = {}
     for field_name, field_type in Metadata.__annotations__.items():
 
@@ -29,7 +27,7 @@ def gen_first_layer_mapping():
 
             # If the type is Union it's because it was set as Optional[Class],
             # so we grab just the class and drop the None
-            if getattr(field_type, '__origin__') is Union:
+            if getattr(field_type, "__origin__") is Union:
                 field_type = get_args(field_type)[0]
 
             mapping[field_name] = field_type
@@ -62,21 +60,22 @@ def gen_second_layer_mapping(model_class_list):
 
 def unwrap_annotated(field_type):
     if get_origin(field_type) is Annotated:
-        # Extract the first argument (Union) of Annotated
-        inner_type = get_args(field_type)[0]
-        return inner_type
-    return field_type  # In case it's not Annotated
+        return get_args(field_type)[0]
+    return field_type
 
 
 FIRST_LAYER_MAPPING = gen_first_layer_mapping()
 
-SECOND_LAYER_MAPPING = gen_second_layer_mapping([
-    Acquisition,
-    DataDescription,
-    Instrument,
-    Procedures,
-    Processing,
-    QualityControl,
-    Rig,
-    Session,
-    Subject])
+SECOND_LAYER_MAPPING = gen_second_layer_mapping(
+    [
+        Acquisition,
+        DataDescription,
+        Instrument,
+        Procedures,
+        Processing,
+        QualityControl,
+        Rig,
+        Session,
+        Subject,
+    ]
+)

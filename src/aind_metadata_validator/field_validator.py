@@ -8,7 +8,9 @@ from aind_metadata_validator.mappings import SECOND_LAYER_MAPPING
 IGNORED_FIELDS = ["describedBy", "schema_version", "license", "creation_time"]
 
 
-def validate_field_metadata(core_file_name: str, data: dict) -> dict[str, MetadataState]:
+def validate_field_metadata(
+    core_file_name: str, data: dict
+) -> dict[str, MetadataState]:
     """Validate a metadata file's fields against their expected classes
 
     Parameters
@@ -39,13 +41,17 @@ def validate_field_metadata(core_file_name: str, data: dict) -> dict[str, Metada
             continue
 
         if field_name not in expected_classes:
-            logging.warning(f"Field name: {field_name} is missing from the expected_classes file")
+            logging.warning(
+                f"Field name: {field_name} is missing from the expected_classes file"
+            )
             continue
 
         expected_class = expected_classes[field_name]
         origin_type = getattr(expected_class, "__origin__", None)
 
-        out[field_name] = validate_field(field_data, origin_type, expected_class)
+        out[field_name] = validate_field(
+            field_data, origin_type, expected_class
+        )
 
     return out
 
@@ -102,7 +108,9 @@ def validate_field_list(field_data, expected_class):
     item_type = get_args(expected_class)[0]
     origin_type = get_origin(item_type)
 
-    statuses = [validate_field(item, origin_type, item_type) for item in field_data]
+    statuses = [
+        validate_field(item, origin_type, item_type) for item in field_data
+    ]
     if all(status == MetadataState.VALID for status in statuses):
         return MetadataState.VALID
     else:
@@ -110,8 +118,7 @@ def validate_field_list(field_data, expected_class):
 
 
 def validate_field_optional(field_data, expected_class):
-    """Validate Optional[type] fields
-    """
+    """Validate Optional[type] fields"""
     if not field_data:
         return MetadataState.VALID
     return try_instantiate(field_data, expected_class)

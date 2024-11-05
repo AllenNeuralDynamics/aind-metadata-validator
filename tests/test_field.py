@@ -1,4 +1,5 @@
 """Field validator tests"""
+
 from typing import Annotated, Optional, Union
 import unittest
 import json
@@ -20,12 +21,16 @@ class TestValidateFieldMetadata(unittest.TestCase):
 
     def setUp(self):
         """Set up test data for validate_field_metadata tests"""
-        with open('./tests/resources/data_description.json') as f:
+        with open("./tests/resources/data_description.json") as f:
             self.data = json.load(f)
-            self.result = validate_field_metadata("data_description", self.data)
-        with open('./tests/resources/data_description_invalid.json') as f:
+            self.result = validate_field_metadata(
+                "data_description", self.data
+            )
+        with open("./tests/resources/data_description_invalid.json") as f:
             self.data_invalid = json.load(f)
-            self.result_invalid = validate_field_metadata("data_description", self.data_invalid)
+            self.result_invalid = validate_field_metadata(
+                "data_description", self.data_invalid
+            )
 
     def test_validate_field_metadata_platform(self):
         self.assertEqual(self.result["platform"], MetadataState.VALID)
@@ -70,7 +75,9 @@ class TestValidateFieldMetadata(unittest.TestCase):
         self.assertEqual(self.result["data_summary"], MetadataState.VALID)
 
     def test_invalidate_field_metadata_subject(self):
-        self.assertEqual(self.result_invalid["subject_id"], MetadataState.MISSING)
+        self.assertEqual(
+            self.result_invalid["subject_id"], MetadataState.MISSING
+        )
 
     def test_invalid_core_file_name(self):
         # Test that invalid core file name raises ValueError
@@ -80,90 +87,90 @@ class TestValidateFieldMetadata(unittest.TestCase):
     def test_validate_field(self):
         # Example unit test for validate_field (add more cases as needed)
         self.assertEqual(
-            validate_field("example_data", None, str),
-            MetadataState.VALID
+            validate_field("example_data", None, str), MetadataState.VALID
+        )
+        self.assertEqual(validate_field(123, None, int), MetadataState.VALID)
+        self.assertEqual(
+            validate_field(123.5, None, float), MetadataState.VALID
         )
         self.assertEqual(
-            validate_field(123, None, int),
-            MetadataState.VALID
-        )
-        self.assertEqual(
-            validate_field(123.5, None, float),
-            MetadataState.VALID
-        )
-        self.assertEqual(
-            validate_field({"key": "value"}, None, dict),
-            MetadataState.VALID
+            validate_field({"key": "value"}, None, dict), MetadataState.VALID
         )
 
         # Tests that pass Optional, Annotated, or Union as origin types
         self.assertEqual(
-            validate_field("string", Optional, str),
-            MetadataState.VALID
+            validate_field("string", Optional, str), MetadataState.VALID
         )
         self.assertEqual(
             validate_field("string", Union, Union[str, None]),
-            MetadataState.VALID
+            MetadataState.VALID,
         )
         self.assertEqual(
             validate_field(1, list, list[Annotated[Union[str, int], "none"]]),
-            MetadataState.PRESENT
+            MetadataState.PRESENT,
         )
         self.assertEqual(
-            validate_field([1, 2, 3], list, list[Annotated[Union[str, int], "none"]]),
-            MetadataState.VALID
+            validate_field(
+                [1, 2, 3], list, list[Annotated[Union[str, int], "none"]]
+            ),
+            MetadataState.VALID,
         )
 
         # Test classes
         device = Device(
             name="device_name",
             device_type="device_type",
-            additional_settings={}
+            additional_settings={},
         )
-        self.assertEqual(validate_field(
-            device.model_dump(),
-            None,
-            Device
-        ), MetadataState.VALID)
-        self.assertEqual(validate_field(
-            DataLevel.DERIVED.value,
-            None,
-            DataLevel
-        ), MetadataState.VALID)
+        self.assertEqual(
+            validate_field(device.model_dump(), None, Device),
+            MetadataState.VALID,
+        )
+        self.assertEqual(
+            validate_field(DataLevel.DERIVED.value, None, DataLevel),
+            MetadataState.VALID,
+        )
 
         # Test models
         aind = Organization.AIND
-        self.assertEqual(validate_field(
-            aind.model_dump(),
-            Annotated,
-            Organization.RESEARCH_INSTITUTIONS
-        ), MetadataState.VALID)
+        self.assertEqual(
+            validate_field(
+                aind.model_dump(),
+                Annotated,
+                Organization.RESEARCH_INSTITUTIONS,
+            ),
+            MetadataState.VALID,
+        )
 
     def test_validate_field_list(self):
         """Test the validate_field_list function"""
-        self.assertEqual(validate_field_list([1, 2, 3], list[int]), MetadataState.VALID)
-        self.assertEqual(validate_field_list(["a", "b", "c"], list[str]), MetadataState.VALID)
-        self.assertEqual(validate_field_list([1, 2, 3], list[Union[int, str]]), MetadataState.VALID)
-        self.assertEqual(validate_field_list(
-            [1, 2, 3],
-            list[Annotated[Union[int, str], "none"]]),
-            MetadataState.VALID
+        self.assertEqual(
+            validate_field_list([1, 2, 3], list[int]), MetadataState.VALID
+        )
+        self.assertEqual(
+            validate_field_list(["a", "b", "c"], list[str]),
+            MetadataState.VALID,
+        )
+        self.assertEqual(
+            validate_field_list([1, 2, 3], list[Union[int, str]]),
+            MetadataState.VALID,
+        )
+        self.assertEqual(
+            validate_field_list(
+                [1, 2, 3], list[Annotated[Union[int, str], "none"]]
+            ),
+            MetadataState.VALID,
         )
 
     def test_validate_field_optional(self):
         """Test the validate_field_optional function"""
         # Test validate_field_optional with empty and non-empty data
+        self.assertEqual(validate_field_optional("", str), MetadataState.VALID)
         self.assertEqual(
-            validate_field_optional("", str),
-            MetadataState.VALID
+            validate_field_optional("non_empty_data", str), MetadataState.VALID
         )
         self.assertEqual(
-            validate_field_optional("non_empty_data", str),
-            MetadataState.VALID
-        )
-        self.assertEqual(
-            validate_field_optional("meow", int),
-            MetadataState.PRESENT
+            validate_field_optional("meow", int), MetadataState.PRESENT
         )
 
     def test_validate_field_union(self):
@@ -171,19 +178,17 @@ class TestValidateFieldMetadata(unittest.TestCase):
         # Test validate_field_union with valid and invalid data
         self.assertEqual(
             validate_field_union({"key": "value"}, [dict, str]),
-            MetadataState.VALID
+            MetadataState.VALID,
         )
         self.assertEqual(
             validate_field_union("string_data", [dict, str]),
-            MetadataState.VALID
+            MetadataState.VALID,
         )
         self.assertEqual(
-            validate_field_union(123, [str, int]),
-            MetadataState.VALID
+            validate_field_union(123, [str, int]), MetadataState.VALID
         )
         self.assertEqual(
-            validate_field_union(123, [dict, str]),
-            MetadataState.PRESENT
+            validate_field_union(123, [dict, str]), MetadataState.PRESENT
         )
 
 
