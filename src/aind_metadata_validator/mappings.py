@@ -1,6 +1,6 @@
 
 # First level metadata models
-from typing import get_args, Union
+from typing import Annotated, get_args, Union, get_origin
 
 from aind_data_schema.core.metadata import Metadata, CORE_FILES
 from aind_data_schema.core.acquisition import Acquisition
@@ -53,11 +53,19 @@ def gen_second_layer_mapping(model_class_list):
             if field_name in EXTRA_FIELDS:
                 continue
 
-            mapping[field_name] = field_type
+            mapping[field_name] = unwrap_annotated(field_type)
 
         mappings[model_class.default_filename().replace(".json", "")] = mapping
 
     return mappings
+
+
+def unwrap_annotated(field_type):
+    if get_origin(field_type) is Annotated:
+        # Extract the first argument (Union) of Annotated
+        inner_type = get_args(field_type)[0]
+        return inner_type
+    return field_type  # In case it's not Annotated
 
 
 FIRST_LAYER_MAPPING = gen_first_layer_mapping()
