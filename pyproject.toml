@@ -18,7 +18,9 @@ dynamic = ["version"]
 
 dependencies = [
     'pydantic',
-    'aind-data-schema'
+    'aind-data-schema',
+    'aind-data-access-api[docdb]',
+    'pandas',
 ]
 
 [project.optional-dependencies]
