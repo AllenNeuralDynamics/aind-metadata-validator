@@ -30,6 +30,15 @@ rds_client = Client(
             ),
       )
 
+logging.basicConfig(
+    level=logging.INFO,  # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
+    handlers=[
+        logging.FileHandler("app.log"),  # Write logs to a file named "app.log"
+        logging.StreamHandler()  # Optional: also log to the console
+    ]
+)
+
 if __name__ == "__main__":
     logging.info("(METADATA VALIDATOR): Starting run")
 
@@ -60,7 +69,7 @@ if __name__ == "__main__":
         for i in range(CHUNK_SIZE, len(df), CHUNK_SIZE):
             rds_client.append_df_to_table(df[i:i + CHUNK_SIZE], RDS_TABLE_NAME)
 
-    df2 = rds_client.read_table(RDS_TABLE_NAME)
-    df2.to_csv("validation_results_from_rds.csv", index=False)
+    # df2 = rds_client.read_table(RDS_TABLE_NAME)
+    # df2.to_csv("validation_results_from_rds.csv", index=False)
 
     logging.info("(METADATA VALIDATOR) Success")
