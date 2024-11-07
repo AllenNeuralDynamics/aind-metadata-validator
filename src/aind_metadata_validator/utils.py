@@ -49,12 +49,13 @@ def expected_files_from_modalities(
     if not isinstance(modalities, list):
         modalities = [modalities]
 
-    for modality in modalities:
-        if "abbreviation" not in modality:
-            continue
-
-        for file in CORE_FILES:
-            #  For each field, check if this is a required/excluded file
+    #  For each field, check if this is a required/excluded file
+    for file in CORE_FILES:
+        for modality in modalities:
+            if "abbreviation" not in modality:
+                # We don't know, so default to required
+                requirement_dict[file] = FileRequirement.REQUIRED
+                continue
 
             # remap
             abbreviation = (

@@ -30,7 +30,7 @@ def validate_metadata(data: dict) -> dict:
         f"(METADATA_VALIDATOR): Running for _id {data['_id']} name {data['name']}"
     )
 
-    results = {}
+    results = {'_id': data['_id']}
 
     # The first thing we'll do is try to get the expected_files for the modalities
     if (
@@ -121,6 +121,6 @@ def validate_metadata(data: dict) -> dict:
                     }
 
             for field_name, field_state in field_results.items():
-                results[f"{core_file_name}_{field_name}"] = field_state
+                results[f"{core_file_name}.{field_name}"] = field_state
 
     return results
