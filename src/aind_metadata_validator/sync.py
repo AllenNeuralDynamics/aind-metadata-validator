@@ -34,7 +34,7 @@ logging.basicConfig(
     level=logging.INFO,  # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
     handlers=[
-        logging.FileHandler("app.log"),  # Write logs to a file named "app.log"
+        logging.FileHandler("results/app.log"),  # Write logs to a file named "app.log"
         logging.StreamHandler()  # Optional: also log to the console
     ]
 )
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     response = client.retrieve_docdb_records(
         filter_query={},
         limit=0,
-        paginate_batch_size=100,
+        paginate_batch_size=500,
     )
 
     logging.info(f"(METADATA VALIDATOR): Retrieved {len(response)} records")
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     df = pd.DataFrame(results)
     # Log results
-    df.to_csv("validation_results.csv", index=False)
+    df.to_csv("results/validation_results.csv", index=False)
 
     logging.info("(METADATA VALIDATOR) Dataframe built -- pushing to RDS")
 
