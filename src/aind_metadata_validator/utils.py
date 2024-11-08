@@ -3,15 +3,13 @@ from aind_data_schema_models.modalities import ExpectedFiles, FileRequirement
 from aind_metadata_validator.mappings import CORE_FILES
 
 
-class MetadataState(str, Enum):
-    VALID = "valid"  # validates as it's class
-    PRESENT = "present"  # present
-    OPTIONAL = "optional"  # missing, but it's optional
-    MISSING = "missing"  # missing, and it's required
-    EXCLUDED = "excluded"  # excluded for all modalities in the metadata
-    CORRUPT = (
-        "corrupt"  # present, but the corresponding JSON data is corrupt in S3
-    )
+class MetadataState(int, Enum):
+    VALID = 10  # validates as it's class
+    PRESENT = 1  # present
+    OPTIONAL = 0  # missing, but it's optional
+    MISSING = -1  # missing, and it's required
+    EXCLUDED = -10  # excluded for all modalities in the metadata
+    CORRUPT = -100  # corrupt, can't be loaded from json
 
 
 REMAPS = {
