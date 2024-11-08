@@ -35,7 +35,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
     handlers=[
         logging.FileHandler(
-            "results/app.log"
+            "/results/app.log"
         ),  # Write logs to a file named "app.log"
         logging.StreamHandler(),  # Optional: also log to the console
     ],
@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
     df = pd.DataFrame(results)
     # Log results
-    df.to_csv("results/validation_results.csv", index=False)
+    df.to_csv("/results/validation_results.csv", index=False)
 
     logging.info("(METADATA VALIDATOR) Dataframe built -- pushing to RDS")
 
