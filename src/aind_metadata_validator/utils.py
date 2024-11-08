@@ -1,6 +1,6 @@
 from enum import Enum
 from aind_data_schema_models.modalities import ExpectedFiles, FileRequirement
-from aind_data_schema.core.metadata import CORE_FILES
+from aind_metadata_validator.mappings import CORE_FILES
 
 
 class MetadataState(str, Enum):
