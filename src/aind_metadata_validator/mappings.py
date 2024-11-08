@@ -1,7 +1,7 @@
 # First level metadata models
 from typing import Annotated, get_args, Union, get_origin
 
-from aind_data_schema.core.metadata import Metadata, CORE_FILES
+from aind_data_schema.core.metadata import Metadata
 from aind_data_schema.core.acquisition import Acquisition
 from aind_data_schema.core.data_description import DataDescription
 from aind_data_schema.core.instrument import Instrument
@@ -15,6 +15,19 @@ from aind_data_schema.core.subject import Subject
 EXTRA_FIELDS = [
     "describedBy",
     "schema_version",
+]
+
+# Replace with pull from aind_data_schema.core.metadata on next release
+CORE_FILES = [
+    "data_description",
+    "acquisition",
+    "procedures",
+    "subject",
+    "instrument",
+    "processing",
+    "rig",
+    "session",
+    "quality_control",
 ]
 
 
