@@ -8,7 +8,9 @@ import pandas as pd
 import os
 import logging
 
-API_GATEWAY_HOST = os.getenv("API_GATEWAY_HOST", "api.allenneuraldynamics-test.org")
+API_GATEWAY_HOST = os.getenv(
+    "API_GATEWAY_HOST", "api.allenneuraldynamics-test.org"
+)
 DATABASE = os.getenv("DATABASE", "metadata_index")
 COLLECTION = os.getenv("COLLECTION", "data_assets")
 
@@ -25,18 +27,18 @@ RDS_TABLE_NAME = f"metadata_status_{DEV_OR_PROD}"
 CHUNK_SIZE = 1000
 
 rds_client = Client(
-            credentials=RDSCredentials(
-               aws_secrets_name=REDSHIFT_SECRETS
-            ),
-      )
+    credentials=RDSCredentials(aws_secrets_name=REDSHIFT_SECRETS),
+)
 
 logging.basicConfig(
     level=logging.INFO,  # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
     handlers=[
-        logging.FileHandler("results/app.log"),  # Write logs to a file named "app.log"
-        logging.StreamHandler()  # Optional: also log to the console
-    ]
+        logging.FileHandler(
+            "results/app.log"
+        ),  # Write logs to a file named "app.log"
+        logging.StreamHandler(),  # Optional: also log to the console
+    ],
 )
 
 if __name__ == "__main__":
@@ -67,9 +69,16 @@ if __name__ == "__main__":
         logging.info("(METADATA VALIDATOR) Chunking required for RDS")
         rds_client.overwrite_table_with_df(df[0:CHUNK_SIZE], RDS_TABLE_NAME)
         for i in range(CHUNK_SIZE, len(df), CHUNK_SIZE):
-            rds_client.append_df_to_table(df[i:i + CHUNK_SIZE], RDS_TABLE_NAME)
+            rds_client.append_df_to_table(
+                df[i : i + CHUNK_SIZE], RDS_TABLE_NAME
+            )
 
-    # df2 = rds_client.read_table(RDS_TABLE_NAME)
-    # df2.to_csv("validation_results_from_rds.csv", index=False)
+    # Roundtrip the table and ensure that the number of rows matches
+    df_in_rds = rds_client.read_table(RDS_TABLE_NAME)
 
-    logging.info("(METADATA VALIDATOR) Success")
+    if len(df) != len(df_in_rds):
+        logging.error(
+            f"(METADATA VALIDATOR) Mismatch in number of rows between input and output: {len(df)} vs {len(df_in_rds)}"
+        )
+    else:
+        logging.info("(METADATA VALIDATOR) Success")
