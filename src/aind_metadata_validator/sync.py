@@ -7,12 +7,15 @@ from aind_data_access_api.rds_tables import Client
 import pandas as pd
 import os
 import logging
+from pathlib import Path
 
 API_GATEWAY_HOST = os.getenv(
     "API_GATEWAY_HOST", "api.allenneuraldynamics-test.org"
 )
 DATABASE = os.getenv("DATABASE", "metadata_index")
 COLLECTION = os.getenv("COLLECTION", "data_assets")
+
+OUTPUT_FOLDER = Path(os.getenv("OUTPUT_FOLDER", "/results"))
 
 client = MetadataDbClient(
     host=API_GATEWAY_HOST,
@@ -35,14 +38,14 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
     handlers=[
         logging.FileHandler(
-            "/results/app.log"
+            OUTPUT_FOLDER / "app.log"
         ),  # Write logs to a file named "app.log"
         logging.StreamHandler(),  # Optional: also log to the console
     ],
 )
 
 if __name__ == "__main__":
-    logging.info("(METADATA VALIDATOR): Starting run")
+    logging.info(f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}")
 
     response = client.retrieve_docdb_records(
         filter_query={},
@@ -58,7 +61,7 @@ if __name__ == "__main__":
 
     df = pd.DataFrame(results)
     # Log results
-    df.to_csv("/results/validation_results.csv", index=False)
+    df.to_csv(OUTPUT_FOLDER / "validation_results.csv", index=False)
 
     logging.info("(METADATA VALIDATOR) Dataframe built -- pushing to RDS")
 

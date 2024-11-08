@@ -4,12 +4,12 @@ from aind_metadata_validator.mappings import CORE_FILES
 
 
 class MetadataState(int, Enum):
-    VALID = 10  # validates as it's class
+    VALID = 2  # validates as it's class
     PRESENT = 1  # present
     OPTIONAL = 0  # missing, but it's optional
     MISSING = -1  # missing, and it's required
-    EXCLUDED = -10  # excluded for all modalities in the metadata
-    CORRUPT = -100  # corrupt, can't be loaded from json
+    EXCLUDED = -2  # excluded for all modalities in the metadata
+    CORRUPT = -3  # corrupt, can't be loaded from json
 
 
 REMAPS = {
