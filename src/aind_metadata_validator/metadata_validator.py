@@ -1,6 +1,7 @@
 from aind_metadata_validator.core_validator import validate_core_metadata
 from aind_metadata_validator.field_validator import validate_field_metadata
-from aind_data_schema.core.metadata import CORE_FILES, Metadata
+from aind_data_schema.core.metadata import Metadata
+from aind_metadata_validator.mappings import CORE_FILES
 from aind_metadata_validator.utils import (
     MetadataState,
     expected_files_from_modalities,
