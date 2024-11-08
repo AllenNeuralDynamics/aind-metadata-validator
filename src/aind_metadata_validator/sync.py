@@ -44,7 +44,8 @@ logging.basicConfig(
     ],
 )
 
-if __name__ == "__main__":
+
+def run():
     logging.info(f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}")
 
     response = client.retrieve_docdb_records(
