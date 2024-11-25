@@ -164,13 +164,33 @@ class TestValidateFieldMetadata(unittest.TestCase):
 
     def test_validate_field_optional(self):
         """Test the validate_field_optional function"""
-        # Test validate_field_optional with empty and non-empty data
-        self.assertEqual(validate_field_optional("", str), MetadataState.VALID)
+        # Test validate_field_optional with empty data
+        self.assertEqual(
+            validate_field_optional("", str), MetadataState.OPTIONAL
+        )
+        self.assertEqual(
+            validate_field_optional(None, str), MetadataState.OPTIONAL
+        )
+        self.assertEqual(
+            validate_field_optional({}, str), MetadataState.OPTIONAL
+        )
+        self.assertEqual(
+            validate_field_optional([], str), MetadataState.OPTIONAL
+        )
+        # Test validate_field_optional with non-empty data
         self.assertEqual(
             validate_field_optional("non_empty_data", str), MetadataState.VALID
         )
+        self.assertEqual(validate_field_optional(1, int), MetadataState.VALID)
+        self.assertEqual(
+            validate_field_optional({"key": "value"}, dict),
+            MetadataState.VALID,
+        )
         self.assertEqual(
             validate_field_optional("meow", int), MetadataState.PRESENT
+        )
+        self.assertEqual(
+            validate_field_optional(1, str), MetadataState.PRESENT
         )
 
     def test_validate_field_union(self):

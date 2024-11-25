@@ -21,6 +21,16 @@ class CoreValidatorTest(unittest.TestCase):
                 "data_description", data_dict, FileRequirement.REQUIRED
             )
         )
+        self.assertIsNotNone(
+            validate_core_metadata(
+                "data_description", data_dict, FileRequirement.EXCLUDED
+            )
+        )
+        self.assertIsNotNone(
+            validate_core_metadata(
+                "data_description", data_dict, FileRequirement.OPTIONAL
+            )
+        )
 
         # check that Present is returned if the core file fails to validate
         data_dict["subject_id"] = None
@@ -36,7 +46,11 @@ class CoreValidatorTest(unittest.TestCase):
         """Value error should be raised for invalid filenames"""
 
         self.assertRaises(
-            ValueError, validate_core_metadata, "invalid_file_name", {}
+            ValueError,
+            validate_core_metadata,
+            "invalid_file_name",
+            {},
+            FileRequirement.REQUIRED,
         )
 
 

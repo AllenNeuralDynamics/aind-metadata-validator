@@ -1,76 +1,117 @@
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import pandas as pd
-import logging
+from aind_metadata_validator.sync import (
+    run,
+    OUTPUT_FOLDER,
+    CHUNK_SIZE,
+    RDS_TABLE_NAME,
+)
 
 
-# Patch environment variables
-@patch("os.getenv", side_effect=lambda key, default=None: default)
-@patch("aind_data_access_api.document_db.MetadataDbClient")
-@patch("aind_metadata_validator.metadata_validator.validate_metadata")
-@patch("aind_data_access_api.rds_tables.Client")
-@patch("pandas.DataFrame.to_csv")
-class TestMain(unittest.TestCase):
+class TestSync(unittest.TestCase):
 
-    def test_main(
+    @patch("aind_metadata_validator.sync.client.retrieve_docdb_records")
+    @patch("aind_metadata_validator.sync.validate_metadata")
+    @patch("aind_metadata_validator.sync.rds_client.overwrite_table_with_df")
+    @patch("aind_metadata_validator.sync.rds_client.append_df_to_table")
+    @patch("aind_metadata_validator.sync.rds_client.read_table")
+    @patch("pandas.DataFrame.to_csv")
+    def test_run(
         self,
         mock_to_csv,
-        MockClient,
+        mock_read_table,
+        mock_append_df_to_table,
+        mock_overwrite_table_with_df,
         mock_validate_metadata,
-        MockMetadataDbClient,
-        mock_getenv,
+        mock_retrieve_docdb_records,
     ):
-        # Configure the mock for MetadataDbClient
-        mock_metadata_client = MockMetadataDbClient.return_value
-        mock_metadata_client.retrieve_docdb_records.return_value = [
-            {"sample_record": 1},
-            {"sample_record": 2},
+        # Mock the responses
+        mock_retrieve_docdb_records.return_value = [
+            {"record": 1},
+            {"record": 2},
         ]
-
-        # Configure the validate_metadata mock to return dummy validation results
-        mock_validate_metadata.side_effect = lambda record: {
-            "result": f"validated_{record['sample_record']}"
+        mock_validate_metadata.side_effect = lambda x: {
+            "validated": x["record"]
         }
-
-        # Configure the mock for RDS Client
-        mock_rds_client = MockClient.return_value
-        mock_rds_client.overwrite_table_with_df = MagicMock()
-        mock_rds_client.append_df_to_table = MagicMock()
-        mock_rds_client.read_table.return_value = pd.DataFrame(
-            [{"result": "validated_1"}, {"result": "validated_2"}]
+        mock_read_table.return_value = pd.DataFrame(
+            [{"validated": 1}, {"validated": 2}]
         )
 
-        # Execute the main code in __main__
-        with patch("builtins.__name__", "__main__"):
-            # Import the main script to trigger the __main__ block
-            import aind_metadata_validator.sync  # Replace with the actual script file name
+        # Run the function
+        run()
 
-        # Assertions to check expected calls
-        mock_metadata_client.retrieve_docdb_records.assert_called_once_with(
-            filter_query={}, limit=0, paginate_batch_size=100
-        )
-        self.assertEqual(
-            mock_validate_metadata.call_count, 2
-        )  # Called for each record
-
-        # DataFrame calls
-        mock_to_csv.assert_any_call("validation_results.csv", index=False)
-        mock_to_csv.assert_any_call(
-            "validation_results_from_rds.csv", index=False
+        # Check if retrieve_docdb_records was called
+        mock_retrieve_docdb_records.assert_called_once_with(
+            filter_query={}, limit=0, paginate_batch_size=500
         )
 
-        # RDS client overwrite and append calls
-        mock_rds_client.overwrite_table_with_df.assert_called_once()
-        if (
-            len(mock_metadata_client.retrieve_docdb_records.return_value)
-            > 1000
-        ):
-            mock_rds_client.append_df_to_table.assert_called()
+        # Check if validate_metadata was called for each record
+        self.assertEqual(mock_validate_metadata.call_count, 2)
 
-        # Check logging
-        with self.assertLogs(level="INFO") as log:
-            logging.info("(METADATA VALIDATOR) Success")
-        self.assertIn("(METADATA VALIDATOR) Success", log.output[-1])
+        # Check if DataFrame.to_csv was called
+        mock_to_csv.assert_called_once_with(
+            OUTPUT_FOLDER / "validation_results.csv", index=False
+        )
+
+        # Check if overwrite_table_with_df was called
+        mock_overwrite_table_with_df.assert_called_once()
+
+        # Check if append_df_to_table was not called (since CHUNK_SIZE > len(df))
+        mock_append_df_to_table.assert_not_called()
+
+        # Check if read_table was called
+        mock_read_table.assert_called_once_with(RDS_TABLE_NAME)
+
+    @patch("aind_metadata_validator.sync.client.retrieve_docdb_records")
+    @patch("aind_metadata_validator.sync.validate_metadata")
+    @patch("aind_metadata_validator.sync.rds_client.overwrite_table_with_df")
+    @patch("aind_metadata_validator.sync.rds_client.append_df_to_table")
+    @patch("aind_metadata_validator.sync.rds_client.read_table")
+    @patch("pandas.DataFrame.to_csv")
+    def test_run_with_chunking(
+        self,
+        mock_to_csv,
+        mock_read_table,
+        mock_append_df_to_table,
+        mock_overwrite_table_with_df,
+        mock_validate_metadata,
+        mock_retrieve_docdb_records,
+    ):
+        # Mock the responses
+        records = [{"record": i} for i in range(CHUNK_SIZE + 1)]
+        mock_retrieve_docdb_records.return_value = records
+        mock_validate_metadata.side_effect = lambda x: {
+            "validated": x["record"]
+        }
+        mock_read_table.return_value = pd.DataFrame(
+            [{"validated": i} for i in range(CHUNK_SIZE + 1)]
+        )
+
+        # Run the function
+        run()
+
+        # Check if retrieve_docdb_records was called
+        mock_retrieve_docdb_records.assert_called_once_with(
+            filter_query={}, limit=0, paginate_batch_size=500
+        )
+
+        # Check if validate_metadata was called for each record
+        self.assertEqual(mock_validate_metadata.call_count, CHUNK_SIZE + 1)
+
+        # Check if DataFrame.to_csv was called
+        mock_to_csv.assert_called_once_with(
+            OUTPUT_FOLDER / "validation_results.csv", index=False
+        )
+
+        # Check if overwrite_table_with_df was called
+        mock_overwrite_table_with_df.assert_called_once()
+
+        # Check if append_df_to_table was called
+        self.assertEqual(mock_append_df_to_table.call_count, 1)
+
+        # Check if read_table was called
+        mock_read_table.assert_called_once_with(RDS_TABLE_NAME)
 
 
 if __name__ == "__main__":

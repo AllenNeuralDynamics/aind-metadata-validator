@@ -120,7 +120,7 @@ def validate_field_list(field_data, expected_class):
 def validate_field_optional(field_data, expected_class):
     """Validate Optional[type] fields"""
     if not field_data:
-        return MetadataState.VALID
+        return MetadataState.OPTIONAL
     return try_instantiate(field_data, expected_class)
 
 
@@ -136,6 +136,7 @@ def validate_field_union(field_data, expected_classes):
 
 def try_instantiate(field_data, expected_class):
     """Get the metadata state based on instantiating as a specific class"""
+    # What is this supposed to do
     if expected_class is type(None):
         return MetadataState.PRESENT if field_data else MetadataState.VALID
     if not expected_class or not field_data:
