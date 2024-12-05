@@ -86,6 +86,7 @@ def validate_field(field_data, origin_type, expected_class) -> MetadataState:
     if origin_type is Annotated:
         expected_class = get_args(expected_class)[0]
         origin_type = get_origin(expected_class)
+        return validate_field(field_data, origin_type, expected_class)
 
     if origin_type is list:
         return validate_field_list(field_data, expected_class)
@@ -131,26 +132,33 @@ def validate_field_union(field_data, expected_classes):
         return MetadataState.VALID
     if MetadataState.PRESENT in states:
         return MetadataState.PRESENT
+    if MetadataState.OPTIONAL in states:
+        return MetadataState.OPTIONAL
     return MetadataState.MISSING
 
 
 def try_instantiate(field_data, expected_class):
     """Get the metadata state based on instantiating as a specific class"""
-    # What is this supposed to do
     if expected_class is type(None):
-        return MetadataState.PRESENT if field_data else MetadataState.VALID
-    if not expected_class or not field_data:
+        # This condition handles Optional[], where it's okay for data to be missing
+        return MetadataState.PRESENT if field_data else MetadataState.OPTIONAL
+    elif not field_data:
+        # Missing data that is not Optional
         return MetadataState.MISSING
 
+    # Special cases
     try:
         if isinstance(field_data, dict):
             expected_class(**field_data)
+            return MetadataState.VALID
         elif isinstance(field_data, expected_class):
-            pass
+            return MetadataState.VALID
         elif issubclass(expected_class, Enum):
             expected_class(field_data)
         else:
             return MetadataState.PRESENT
+        
+        # If we get here... what state are we even in?
         return MetadataState.VALID
     except Exception:
         return MetadataState.PRESENT
