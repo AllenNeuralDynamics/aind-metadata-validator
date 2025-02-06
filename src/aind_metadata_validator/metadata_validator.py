@@ -54,7 +54,7 @@ def validate_metadata(data: dict) -> dict:
         if metadata:
             results["metadata"] = MetadataState.VALID
     except Exception as e:
-        logging.error(f"(METADATA_VALIDATOR): Error validating metadata: {e}")
+        logging.exception(f"(METADATA_VALIDATOR): Error validating metadata {e}")
         results["metadata"] = MetadataState.PRESENT
 
     # Loop through core files
