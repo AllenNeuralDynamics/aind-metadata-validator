@@ -4,7 +4,6 @@ from aind_data_schema.core.metadata import Metadata
 from aind_metadata_validator.mappings import CORE_FILES
 from aind_metadata_validator.utils import (
     MetadataState,
-    expected_files_from_modalities,
     FileRequirement,
 )
 from aind_metadata_validator.mappings import SECOND_LAYER_MAPPING
@@ -34,18 +33,16 @@ def validate_metadata(data: dict) -> dict:
     results = {"_id": data["_id"]}
 
     # The first thing we'll do is try to get the expected_files for the modalities
-    if (
-        "data_description" in data
-        and data["data_description"]
-        and "modality" in data["data_description"]
-    ):
-        file_requirements = expected_files_from_modalities(
-            modalities=data["data_description"]["modality"]
-        )
-    else:
-        file_requirements = {
-            core_file: FileRequirement.REQUIRED for core_file in CORE_FILES
-        }
+    file_requirements = {
+        "subject": FileRequirement.REQUIRED,
+        "data_description": FileRequirement.REQUIRED,
+        "procedures": FileRequirement.REQUIRED,
+        "instrument": FileRequirement.REQUIRED,
+        "acquisition": FileRequirement.REQUIRED,
+    }
+    for core_file_name in CORE_FILES:
+        if core_file_name not in file_requirements:
+            file_requirements[core_file_name] = FileRequirement.OPTIONAL
 
     # Try to validate everything
     logging.info("(METADATA_VALIDATOR): Full metadata")

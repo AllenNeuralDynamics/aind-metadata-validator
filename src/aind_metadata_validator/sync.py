@@ -51,7 +51,7 @@ def run():
     response = client.retrieve_docdb_records(
         filter_query={},
         limit=0,
-        paginate_batch_size=500,
+        paginate_batch_size=100,
     )
 
     logging.info(f"(METADATA VALIDATOR): Retrieved {len(response)} records")
