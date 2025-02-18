@@ -35,6 +35,9 @@ def validate_field_metadata(
 
     expected_classes = SECOND_LAYER_MAPPING[core_file_name]
 
+    if not isinstance(data, dict):
+        return {field: MetadataState.MISSING for field in expected_classes}
+
     out = {}
     for field_name, field_data in data.items():
         if field_name in IGNORED_FIELDS:
