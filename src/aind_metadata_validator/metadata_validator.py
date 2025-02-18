@@ -31,11 +31,12 @@ def validate_metadata(data: dict, prev_validation) -> dict:
 
     if prev_validation:
         # Check first if the version is identical
-        if prev_validation["validator_version"] == version and prev_validation["last_modified"] == data["last_modified"]:
-            logging.info(
-                f"(METADATA_VALIDATOR): Skipping validation for _id {data['_id']} name {data['name']} as it has already been validated"
-            )
-            return prev_validation
+        if "validator_version" in prev_validation:
+            if prev_validation["validator_version"] == version and prev_validation["last_modified"] == data["last_modified"]:
+                logging.info(
+                    f"(METADATA_VALIDATOR): Skipping validation for _id {data['_id']} name {data['name']} as it has already been validated"
+                )
+                return prev_validation
 
     logging.info(
         f"(METADATA_VALIDATOR): Running for _id {data['_id']} name {data['name']}"
