@@ -8,6 +8,7 @@ import pandas as pd
 import os
 import logging
 from pathlib import Path
+import argparse
 
 API_GATEWAY_HOST = os.getenv(
     "API_GATEWAY_HOST", "api.allenneuraldynamics-test.org"
@@ -45,20 +46,29 @@ logging.basicConfig(
 )
 
 
-def run():
+def run(test_mode: bool = False):
     logging.info(f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}")
 
     response = client.retrieve_docdb_records(
         filter_query={},
-        limit=0,
+        limit=10 if test_mode else 0,
         paginate_batch_size=100,
     )
 
     logging.info(f"(METADATA VALIDATOR): Retrieved {len(response)} records")
 
+    original_df = rds_client.read_table(RDS_TABLE_NAME)
+
     results = []
     for record in response:
-        results.append(validate_metadata(record))
+        if original_df is not None and record["_id"] in original_df["_id"].values:
+            # Get the matching row from the original dataframe as a dictionary
+            prev_validation = original_df.loc[
+                original_df["_id"] == record["_id"]
+            ].to_dict(orient="records")[0]
+            results.append(validate_metadata(record, prev_validation))
+        else:
+            results.append(validate_metadata(record, None))
 
     df = pd.DataFrame(results)
     # Log results
@@ -86,3 +96,15 @@ def run():
         )
     else:
         logging.info("(METADATA VALIDATOR) Success")
+
+
+if __name__ == "__main__":
+    # Use argparse to check if we are running in test mode, if so limit the number of records
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--test",
+        help="Run in test mode with a limited number of records",
+        action="store_true",
+    )
+    args = parser.parse_args()
+    run(args.test)

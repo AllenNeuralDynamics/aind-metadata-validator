@@ -1,3 +1,5 @@
+from typing import Optional
+from aind_metadata_validator import __version__ as version
 from aind_metadata_validator.core_validator import validate_core_metadata
 from aind_metadata_validator.field_validator import validate_field_metadata
 from aind_data_schema.core.metadata import Metadata
@@ -10,7 +12,7 @@ from aind_metadata_validator.mappings import SECOND_LAYER_MAPPING
 import logging
 
 
-def validate_metadata(data: dict) -> dict:
+def validate_metadata(data: dict, prev_validation) -> dict:
     """Validate metadata
 
     Parameters
@@ -26,6 +28,15 @@ def validate_metadata(data: dict) -> dict:
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
     )
+
+    if prev_validation:
+        # Check first if the version is identical
+        if prev_validation["validator_version"] == version and prev_validation["last_modified"] == data["last_modified"]:
+            logging.info(
+                f"(METADATA_VALIDATOR): Skipping validation for _id {data['_id']} name {data['name']} as it has already been validated"
+            )
+            return prev_validation
+
     logging.info(
         f"(METADATA_VALIDATOR): Running for _id {data['_id']} name {data['name']}"
     )
@@ -120,5 +131,9 @@ def validate_metadata(data: dict) -> dict:
 
             for field_name, field_state in field_results.items():
                 results[f"{core_file_name}.{field_name}"] = field_state
+
+    # Add the last_modified field and the validator version
+    results["last_modified"] = data["last_modified"]
+    results["validator_version"] = version
 
     return results
