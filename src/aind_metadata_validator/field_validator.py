@@ -5,7 +5,7 @@ from aind_metadata_validator.utils import MetadataState
 from aind_metadata_validator.mappings import SECOND_LAYER_MAPPING
 
 
-IGNORED_FIELDS = ["describedBy", "schema_version", "license", "creation_time"]
+IGNORED_FIELDS = ["describedBy", "schema_version", "license", "creation_time", "_DESCRIBED_BY_URL", "_described_by_url"]
 
 
 def validate_field_metadata(
