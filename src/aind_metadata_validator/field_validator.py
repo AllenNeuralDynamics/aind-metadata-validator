@@ -40,7 +40,7 @@ def validate_field_metadata(
 
     out = {}
     for field_name, field_data in data.items():
-        if field_name in IGNORED_FIELDS:
+        if any([ignore_field in field_name for ignore_field in IGNORED_FIELDS]):
             continue
 
         if field_name not in expected_classes:
