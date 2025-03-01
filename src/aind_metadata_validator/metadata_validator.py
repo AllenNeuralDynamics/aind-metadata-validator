@@ -1,4 +1,3 @@
-from typing import Optional
 from aind_metadata_validator import __version__ as version
 from aind_metadata_validator.core_validator import validate_core_metadata
 from aind_metadata_validator.field_validator import validate_field_metadata

@@ -2,10 +2,7 @@ from enum import Enum
 from typing import Annotated, Optional, Union, get_args, get_origin
 import logging
 from aind_metadata_validator.utils import MetadataState
-from aind_metadata_validator.mappings import SECOND_LAYER_MAPPING
-
-
-IGNORED_FIELDS = ["describedBy", "schema_version", "license", "creation_time", "_DESCRIBED_BY_URL", "_described_by_url"]
+from aind_metadata_validator.mappings import SECOND_LAYER_MAPPING, EXTRA_FIELDS
 
 
 def validate_field_metadata(
@@ -40,7 +37,8 @@ def validate_field_metadata(
 
     out = {}
     for field_name, field_data in data.items():
-        if any([ignore_field in field_name for ignore_field in IGNORED_FIELDS]):
+        if any([ignore_field in field_name for ignore_field in EXTRA_FIELDS]):
+            logging.info(f"Skipping ignored field: {field_name}")
             continue
 
         if field_name not in expected_classes:

@@ -17,6 +17,7 @@ DATABASE = os.getenv("DATABASE", "metadata_index")
 COLLECTION = os.getenv("COLLECTION", "data_assets")
 
 OUTPUT_FOLDER = Path(os.getenv("OUTPUT_FOLDER", "/results"))
+OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
 
 client = MetadataDbClient(
     host=API_GATEWAY_HOST,
@@ -46,7 +47,7 @@ logging.basicConfig(
 )
 
 
-def run(test_mode: bool = False):
+def run(test_mode: bool = False, force: bool = False):
     logging.info(f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}")
 
     # Get all unique _id values in the database
@@ -94,7 +95,7 @@ def run(test_mode: bool = False):
                 prev_validation = original_df.loc[
                     original_df["_id"] == record["_id"]
                 ].to_dict(orient="records")[0]
-                results.append(validate_metadata(record, prev_validation))
+                results.append(validate_metadata(record, prev_validation if not force else None))
             else:
                 results.append(validate_metadata(record, None))
 
@@ -137,5 +138,10 @@ if __name__ == "__main__":
         help="Run in test mode with a limited number of records",
         action="store_true",
     )
+    parser.add_argument(
+        "--force",
+        help="Run in test mode with a limited number of records",
+        action="store_true",
+    )
     args = parser.parse_args()
-    run(args.test)
+    run(args.test, args.force)
