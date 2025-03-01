@@ -12,7 +12,14 @@ from aind_data_schema.core.rig import Rig
 from aind_data_schema.core.session import Session
 from aind_data_schema.core.subject import Subject
 
-EXTRA_FIELDS = ["describedBy", "schema_version", "license", "creation_time", "_DESCRIBED_BY_URL", "_described_by_url"]
+EXTRA_FIELDS = [
+    "describedBy",
+    "schema_version",
+    "license",
+    "creation_time",
+    "_DESCRIBED_BY_URL",
+    "_described_by_url",
+]
 
 
 # Replace with pull from aind_data_schema.core.metadata on next release

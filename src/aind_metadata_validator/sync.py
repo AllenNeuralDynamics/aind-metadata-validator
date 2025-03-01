@@ -48,23 +48,15 @@ logging.basicConfig(
 
 
 def run(test_mode: bool = False, force: bool = False):
-    logging.info(f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}")
+    logging.info(
+        f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}"
+    )
 
     # Get all unique _id values in the database
     unique_ids = client.aggregate_docdb_records(
-        pipeline=[   
-            {
-                "$group": {
-                    "_id": None,
-                    "ids": {"$push": "$_id"}
-                }
-            },
-            {
-                "$project": {
-                    "_id": 0,
-                    "ids": 1
-                }
-            }
+        pipeline=[
+            {"$group": {"_id": None, "ids": {"$push": "$_id"}}},
+            {"$project": {"_id": 0, "ids": 1}},
         ],
     )
     unique_ids = list(unique_ids[0]["ids"])
@@ -81,7 +73,7 @@ def run(test_mode: bool = False, force: bool = False):
     # Go through the unique IDs in chunks of 100
 
     for i in range(0, len(unique_ids), 100):
-        chunk = unique_ids[i: i + 100]
+        chunk = unique_ids[i : i + 100]
 
         response = client.retrieve_docdb_records(
             filter_query={"_id": {"$in": chunk}},
@@ -90,12 +82,19 @@ def run(test_mode: bool = False, force: bool = False):
         )
 
         for record in response:
-            if original_df is not None and record["_id"] in original_df["_id"].values:
+            if (
+                original_df is not None
+                and record["_id"] in original_df["_id"].values
+            ):
                 # Get the matching row from the original dataframe as a dictionary
                 prev_validation = original_df.loc[
                     original_df["_id"] == record["_id"]
                 ].to_dict(orient="records")[0]
-                results.append(validate_metadata(record, prev_validation if not force else None))
+                results.append(
+                    validate_metadata(
+                        record, prev_validation if not force else None
+                    )
+                )
             else:
                 results.append(validate_metadata(record, None))
 
@@ -106,17 +105,21 @@ def run(test_mode: bool = False, force: bool = False):
     logging.info("(METADATA VALIDATOR) Dataframe built -- pushing to RDS")
 
     if test_mode:
-        logging.info("(METADATA VALIDATOR) Running in test mode, would have written table")
+        logging.info(
+            "(METADATA VALIDATOR) Running in test mode, would have written table"
+        )
     else:
         if len(df) < CHUNK_SIZE:
             rds_client.overwrite_table_with_df(df, RDS_TABLE_NAME)
         else:
             # chunk into CHUNK_SIZE row chunks
             logging.info("(METADATA VALIDATOR) Chunking required for RDS")
-            rds_client.overwrite_table_with_df(df[0:CHUNK_SIZE], RDS_TABLE_NAME)
+            rds_client.overwrite_table_with_df(
+                df[0:CHUNK_SIZE], RDS_TABLE_NAME
+            )
             for i in range(CHUNK_SIZE, len(df), CHUNK_SIZE):
                 rds_client.append_df_to_table(
-                    df[i: i + CHUNK_SIZE], RDS_TABLE_NAME
+                    df[i : i + CHUNK_SIZE], RDS_TABLE_NAME
                 )
 
     # Roundtrip the table and ensure that the number of rows matches

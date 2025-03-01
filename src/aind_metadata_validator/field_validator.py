@@ -158,7 +158,7 @@ def try_instantiate(field_data, expected_class):
             expected_class(field_data)
         else:
             return MetadataState.PRESENT
-        
+
         # If we get here... what state are we even in?
         return MetadataState.VALID
     except Exception:

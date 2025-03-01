@@ -218,8 +218,12 @@ class TestValidateFieldMetadata(unittest.TestCase):
         )
 
     def test_try_instantiate_none_type(self):
-        self.assertEqual(try_instantiate(None, type(None)), MetadataState.OPTIONAL)
-        self.assertEqual(try_instantiate("data", type(None)), MetadataState.PRESENT)
+        self.assertEqual(
+            try_instantiate(None, type(None)), MetadataState.OPTIONAL
+        )
+        self.assertEqual(
+            try_instantiate("data", type(None)), MetadataState.PRESENT
+        )
 
     def test_try_instantiate_missing_data(self):
         self.assertEqual(try_instantiate(None, str), MetadataState.MISSING)
@@ -234,8 +238,14 @@ class TestValidateFieldMetadata(unittest.TestCase):
             def __init__(self, field):
                 self.field = field
 
-        self.assertEqual(try_instantiate({"field": "value"}, DummyClass), MetadataState.VALID)
-        self.assertEqual(try_instantiate({"wrong_field": "value"}, DummyClass), MetadataState.PRESENT)
+        self.assertEqual(
+            try_instantiate({"field": "value"}, DummyClass),
+            MetadataState.VALID,
+        )
+        self.assertEqual(
+            try_instantiate({"wrong_field": "value"}, DummyClass),
+            MetadataState.PRESENT,
+        )
 
     def test_try_instantiate_invalid_data(self):
         self.assertEqual(try_instantiate(123, str), MetadataState.PRESENT)
