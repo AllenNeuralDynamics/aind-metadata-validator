@@ -13,7 +13,7 @@ import argparse
 API_GATEWAY_HOST = os.getenv(
     "API_GATEWAY_HOST", "api.allenneuraldynamics-test.org"
 )
-DATABASE = os.getenv("DATABASE", "metadata_index")
+DATABASE = os.getenv("DATABASE", "metadata_index_v2")
 COLLECTION = os.getenv("COLLECTION", "data_assets")
 
 OUTPUT_FOLDER = Path(os.getenv("OUTPUT_FOLDER", "/results"))

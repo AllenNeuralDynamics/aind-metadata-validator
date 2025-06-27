@@ -33,14 +33,8 @@ class TestValidateFieldMetadata(unittest.TestCase):
                 "data_description", self.data_invalid
             )
 
-    def test_validate_field_metadata_platform(self):
-        self.assertEqual(self.result["platform"], MetadataState.VALID)
-
     def test_validate_field_metadata_subject_id(self):
         self.assertEqual(self.result["subject_id"], MetadataState.VALID)
-
-    def test_validate_field_metadata_label(self):
-        self.assertEqual(self.result["label"], MetadataState.OPTIONAL)
 
     def test_validate_field_metadata_name(self):
         self.assertEqual(self.result["name"], MetadataState.VALID)
@@ -67,22 +61,19 @@ class TestValidateFieldMetadata(unittest.TestCase):
         self.assertEqual(self.result["restrictions"], MetadataState.OPTIONAL)
 
     def test_validate_field_metadata_modality(self):
-        self.assertEqual(self.result["modality"], MetadataState.VALID)
-
-    def test_validate_field_metadata_related_data(self):
-        self.assertEqual(self.result["related_data"], MetadataState.VALID)
+        self.assertEqual(self.result["modalities"], MetadataState.VALID)
 
     def test_validate_field_metadata_data_summary(self):
         self.assertEqual(self.result["data_summary"], MetadataState.OPTIONAL)
 
     def test_invalidate_field_metadata_subject(self):
         self.assertEqual(
-            self.result_invalid["subject_id"], MetadataState.MISSING
+            self.result_invalid["subject_id"], MetadataState.OPTIONAL
         )
 
     def test_invalidate_field_datadesc_project_name(self):
         self.assertEqual(
-            self.result_invalid["project_name"], MetadataState.OPTIONAL
+            self.result_invalid["project_name"], MetadataState.MISSING
         )
 
     def test_invalid_core_file_name(self):
