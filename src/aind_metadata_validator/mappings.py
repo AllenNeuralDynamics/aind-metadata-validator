@@ -8,9 +8,9 @@ from aind_data_schema.core.instrument import Instrument
 from aind_data_schema.core.procedures import Procedures
 from aind_data_schema.core.processing import Processing
 from aind_data_schema.core.quality_control import QualityControl
-from aind_data_schema.core.rig import Rig
-from aind_data_schema.core.session import Session
 from aind_data_schema.core.subject import Subject
+from aind_data_schema.core.model import Model
+from aind_data_schema.core.metadata import CORE_FILES
 
 EXTRA_FIELDS = [
     "describedBy",
@@ -19,20 +19,6 @@ EXTRA_FIELDS = [
     "creation_time",
     "_DESCRIBED_BY_URL",
     "_described_by_url",
-]
-
-
-# Replace with pull from aind_data_schema.core.metadata on next release
-CORE_FILES = [
-    "data_description",
-    "acquisition",
-    "procedures",
-    "subject",
-    "instrument",
-    "processing",
-    "rig",
-    "session",
-    "quality_control",
 ]
 
 
@@ -92,8 +78,7 @@ SECOND_LAYER_MAPPING = gen_second_layer_mapping(
         Procedures,
         Processing,
         QualityControl,
-        Rig,
-        Session,
         Subject,
+        Model,
     ]
 )

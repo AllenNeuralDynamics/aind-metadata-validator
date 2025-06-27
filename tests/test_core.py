@@ -2,8 +2,7 @@
 
 import unittest
 from aind_metadata_validator.core_validator import validate_core_metadata
-from aind_metadata_validator.utils import MetadataState
-from aind_data_schema_models.modalities import FileRequirement
+from aind_metadata_validator.utils import MetadataState, FileRequirement
 import json
 
 
@@ -19,11 +18,6 @@ class CoreValidatorTest(unittest.TestCase):
         self.assertIsNotNone(
             validate_core_metadata(
                 "data_description", data_dict, FileRequirement.REQUIRED
-            )
-        )
-        self.assertIsNotNone(
-            validate_core_metadata(
-                "data_description", data_dict, FileRequirement.EXCLUDED
             )
         )
         self.assertIsNotNone(

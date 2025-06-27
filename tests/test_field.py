@@ -125,8 +125,6 @@ class TestValidateFieldMetadata(unittest.TestCase):
         # Test classes
         device = Device(
             name="device_name",
-            device_type="device_type",
-            additional_settings={},
         )
         self.assertEqual(
             validate_field(device.model_dump(), None, Device),
