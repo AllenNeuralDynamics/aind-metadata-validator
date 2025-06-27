@@ -37,14 +37,8 @@ def validate_core_metadata(
             return MetadataState.MISSING
         elif requirement == FileRequirement.OPTIONAL:
             return MetadataState.OPTIONAL
-        elif requirement == FileRequirement.EXCLUDED:
-            return MetadataState.EXCLUDED
         else:
             raise ValueError(f"Invalid requirement: {requirement}")
-
-    # If we have data, check if we should have been excluded
-    if requirement == FileRequirement.EXCLUDED:
-        return MetadataState.EXCLUDED
 
     try:
         expected_class(**data)

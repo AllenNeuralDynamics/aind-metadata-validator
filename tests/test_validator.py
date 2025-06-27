@@ -150,6 +150,8 @@ class ValidatorTest(unittest.TestCase):
             "quality_control.notes": 2,
         }
 
+        print(results)
+
         for field in results:
             if results[field] != expected[field]:
                 print(field, results[field], expected[field])

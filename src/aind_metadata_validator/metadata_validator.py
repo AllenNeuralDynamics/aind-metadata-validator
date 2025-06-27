@@ -10,9 +10,10 @@ from aind_metadata_validator.utils import (
 )
 from aind_metadata_validator.mappings import SECOND_LAYER_MAPPING
 import logging
+from typing import Optional
 
 
-def validate_metadata(data: dict, prev_validation) -> dict:
+def validate_metadata(data: dict, prev_validation: Optional[dict] = None) -> dict:
     """Validate metadata
 
     Parameters
@@ -34,7 +35,7 @@ def validate_metadata(data: dict, prev_validation) -> dict:
         if "validator_version" in prev_validation:
             if (
                 prev_validation["validator_version"] == version
-                and prev_validation["last_modified"] == data["last_modified"]
+                and prev_validation["_last_modified"] == data["_last_modified"]
             ):
                 logging.info(
                     f"(METADATA_VALIDATOR): Skipping validation for _id {data['_id']} name {data['name']} as it has already been validated"
@@ -135,7 +136,7 @@ def validate_metadata(data: dict, prev_validation) -> dict:
                 results[f"{core_file_name}.{field_name}"] = field_state
 
     # Add the last_modified field and the validator version
-    results["last_modified"] = data["last_modified"]
+    results["_last_modified"] = data["_last_modified"]
     results["validator_version"] = version
 
     return results
