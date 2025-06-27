@@ -68,12 +68,15 @@ def run(test_mode: bool = False, force: bool = False):
     logging.info(f"(METADATA VALIDATOR): Retrieved {len(unique_ids)} records")
     original_df = rds_client.read_table(RDS_TABLE_NAME)
 
+    if len(original_df) < 10:
+        original_df = None
+
     results = []
 
     # Go through the unique IDs in chunks of 100
 
     for i in range(0, len(unique_ids), 100):
-        chunk = unique_ids[i : i + 100]
+        chunk = unique_ids[i: i + 100]
 
         response = client.retrieve_docdb_records(
             filter_query={"_id": {"$in": chunk}},
@@ -143,7 +146,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--force",
-        help="Run in test mode with a limited number of records",
+        help="Force validation to ignore previous results",
         action="store_true",
     )
     args = parser.parse_args()
