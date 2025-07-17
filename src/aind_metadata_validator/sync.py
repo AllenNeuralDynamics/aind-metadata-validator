@@ -52,20 +52,20 @@ def run(test_mode: bool = False, force: bool = False):
         f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}"
     )
 
-    # Get all unique _id values in the database
-    unique_ids = client.aggregate_docdb_records(
+    # Get all unique location values in the database
+    uniquelocations = client.aggregate_docdb_records(
         pipeline=[
-            {"$group": {"_id": None, "ids": {"$push": "$_id"}}},
-            {"$project": {"_id": 0, "ids": 1}},
+            {"$group": {"_id": None, "locations": {"$addToSet": "$location"}}},
+            {"$project": {"_id": 0, "locations": 1}},
         ],
     )
-    unique_ids = list(unique_ids[0]["ids"])
+    uniquelocations = list(uniquelocations[0]["locations"])
 
     if test_mode:
         logging.info("(METADATA VALIDATOR): Running in test mode")
-        unique_ids = unique_ids[:10]
+        uniquelocations = uniquelocations[:10]
 
-    logging.info(f"(METADATA VALIDATOR): Retrieved {len(unique_ids)} records")
+    logging.info(f"(METADATA VALIDATOR): Retrieved {len(uniquelocations)} records")
     original_df = rds_client.read_table(RDS_TABLE_NAME)
 
     if len(original_df) < 10:
@@ -75,11 +75,11 @@ def run(test_mode: bool = False, force: bool = False):
 
     # Go through the unique IDs in chunks of 100
 
-    for i in range(0, len(unique_ids), 100):
-        chunk = unique_ids[i: i + 100]
+    for i in range(0, len(uniquelocations), 100):
+        chunk = uniquelocations[i: i + 100]
 
         response = client.retrieve_docdb_records(
-            filter_query={"_id": {"$in": chunk}},
+            filter_query={"location": {"$in": chunk}},
             limit=0,
             paginate_batch_size=100,
         )
@@ -87,11 +87,11 @@ def run(test_mode: bool = False, force: bool = False):
         for record in response:
             if (
                 original_df is not None
-                and record["_id"] in original_df["_id"].values
+                and record["location"] in original_df["location"].values
             ):
                 # Get the matching row from the original dataframe as a dictionary
                 prev_validation = original_df.loc[
-                    original_df["_id"] == record["_id"]
+                    original_df["location"] == record["location"]
                 ].to_dict(orient="records")[0]
                 results.append(
                     validate_metadata(

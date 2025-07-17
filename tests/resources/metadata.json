@@ -18,18 +18,12 @@
       "strain": {
         "name": "C57BL/6J",
         "species": "Mus musculus",
-        "registry": {
-          "name": "Mouse Genome Informatics",
-          "abbreviation": "MGI"
-        },
+        "registry": "Mouse Genome Informatics (MGI)",
         "registry_identifier": "MGI:3028467"
       },
       "species": {
         "name": "Mus musculus",
-        "registry": {
-          "name": "National Center for Biotechnology Information",
-          "abbreviation": "NCBI"
-        },
+        "registry": "National Center for Biotechnology Information (NCBI)",
         "registry_identifier": "NCBI:txid10090"
       },
       "alleles": [],
@@ -54,10 +48,7 @@
       "source": {
         "name": "Allen Institute",
         "abbreviation": "AI",
-        "registry": {
-          "name": "Research Organization Registry",
-          "abbreviation": "ROR"
-        },
+        "registry": "Research Organization Registry (ROR)",
         "registry_identifier": "03cpe7c52"
       },
       "restrictions": null,
@@ -77,10 +68,7 @@
     "institution": {
       "name": "Allen Institute for Neural Dynamics",
       "abbreviation": "AIND",
-      "registry": {
-        "name": "Research Organization Registry",
-        "abbreviation": "ROR"
-      },
+      "registry": "Research Organization Registry (ROR)",
       "registry_identifier": "04szwah67"
     },
     "funding_source": [
@@ -89,10 +77,7 @@
         "funder": {
           "name": "Allen Institute",
           "abbreviation": "AI",
-          "registry": {
-            "name": "Research Organization Registry",
-            "abbreviation": "ROR"
-          },
+          "registry": "Research Organization Registry (ROR)",
           "registry_identifier": "03cpe7c52"
         },
         "grant_number": null,
@@ -105,37 +90,25 @@
       {
         "object_type": "Person",
         "name": "Marina Garrett",
-        "registry": {
-          "name": "Open Researcher and Contributor ID",
-          "abbreviation": "ORCID"
-        },
+        "registry": "Open Researcher and Contributor ID (ORCID)",
         "registry_identifier": null
       },
       {
         "object_type": "Person",
         "name": "Peter Groblewski",
-        "registry": {
-          "name": "Open Researcher and Contributor ID",
-          "abbreviation": "ORCID"
-        },
+        "registry": "Open Researcher and Contributor ID (ORCID)",
         "registry_identifier": null
       },
       {
         "object_type": "Person",
         "name": "Anton Arkhipov",
-        "registry": {
-          "name": "Open Researcher and Contributor ID",
-          "abbreviation": "ORCID"
-        },
+        "registry": "Open Researcher and Contributor ID (ORCID)",
         "registry_identifier": null
       },
       {
         "object_type": "Person",
         "name": "Omid Zobeiri",
-        "registry": {
-          "name": "Open Researcher and Contributor ID",
-          "abbreviation": "ORCID"
-        },
+        "registry": "Open Researcher and Contributor ID (ORCID)",
         "registry_identifier": null
       }
     ],
@@ -167,10 +140,7 @@
           {
             "object_type": "Person",
             "name": "NSB",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -223,10 +193,7 @@
           {
             "object_type": "Person",
             "name": "LAS-117",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -253,10 +220,7 @@
             ],
             "targeted_structure": {
               "name": "venous sinus",
-              "registry": {
-                "name": "Edinburgh Mouse Atlas Project",
-                "abbreviation": "EMAPA"
-              },
+              "registry": "Edinburgh Mouse Atlas Project (EMAPA)",
               "registry_identifier": "37025"
             },
             "relative_position": [
@@ -1373,10 +1337,7 @@
         "manufacturer": {
           "name": "Allen Institute for Neural Dynamics",
           "abbreviation": "AIND",
-          "registry": {
-            "name": "Research Organization Registry",
-            "abbreviation": "ROR"
-          },
+          "registry": "Research Organization Registry (ROR)",
           "registry_identifier": "04szwah67"
         },
         "model": null,
@@ -1426,10 +1387,7 @@
         "manufacturer": {
           "name": "ASUS",
           "abbreviation": null,
-          "registry": {
-            "name": "Research Organization Registry",
-            "abbreviation": "ROR"
-          },
+          "registry": "Research Organization Registry (ROR)",
           "registry_identifier": "00bxkz165"
         },
         "model": "PA248Q",
@@ -1524,10 +1482,7 @@
           "manufacturer": {
             "name": "Thorlabs",
             "abbreviation": null,
-            "registry": {
-              "name": "Research Organization Registry",
-              "abbreviation": "ROR"
-            },
+            "registry": "Research Organization Registry (ROR)",
             "registry_identifier": "04gsnvb07"
           },
           "model": "MVL6WA",
@@ -1741,10 +1696,7 @@
           "manufacturer": {
             "name": "Edmund Optics",
             "abbreviation": null,
-            "registry": {
-              "name": "Research Organization Registry",
-              "abbreviation": "ROR"
-            },
+            "registry": "Research Organization Registry (ROR)",
             "registry_identifier": "01j1gwp17"
           },
           "model": "86-604",
@@ -1778,10 +1730,7 @@
         "manufacturer": {
           "name": "National Instruments",
           "abbreviation": null,
-          "registry": {
-            "name": "Research Organization Registry",
-            "abbreviation": "ROR"
-          },
+          "registry": "Research Organization Registry (ROR)",
           "registry_identifier": "026exqw73"
         },
         "model": "USB-6001",
@@ -1799,10 +1748,7 @@
         "manufacturer": {
           "name": "National Instruments",
           "abbreviation": null,
-          "registry": {
-            "name": "Research Organization Registry",
-            "abbreviation": "ROR"
-          },
+          "registry": "Research Organization Registry (ROR)",
           "registry_identifier": "026exqw73"
         },
         "model": "PCIe-6612",
@@ -1820,10 +1766,7 @@
         "manufacturer": {
           "name": "National Instruments",
           "abbreviation": null,
-          "registry": {
-            "name": "Research Organization Registry",
-            "abbreviation": "ROR"
-          },
+          "registry": "Research Organization Registry (ROR)",
           "registry_identifier": "026exqw73"
         },
         "model": "PCIe-6321",
@@ -1841,10 +1784,7 @@
         "manufacturer": {
           "name": "National Instruments",
           "abbreviation": null,
-          "registry": {
-            "name": "Research Organization Registry",
-            "abbreviation": "ROR"
-          },
+          "registry": "Research Organization Registry (ROR)",
           "registry_identifier": "026exqw73"
         },
         "model": "vDAQ",
@@ -1862,10 +1802,7 @@
         "manufacturer": {
           "name": "Coherent Scientific",
           "abbreviation": null,
-          "registry": {
-            "name": "Research Organization Registry",
-            "abbreviation": "ROR"
-          },
+          "registry": "Research Organization Registry (ROR)",
           "registry_identifier": "031tysd23"
         },
         "model": null,
@@ -1884,10 +1821,7 @@
         "manufacturer": {
           "name": "Hamamatsu",
           "abbreviation": null,
-          "registry": {
-            "name": "Research Organization Registry",
-            "abbreviation": "ROR"
-          },
+          "registry": "Research Organization Registry (ROR)",
           "registry_identifier": "03natb733"
         },
         "model": null,
@@ -1927,10 +1861,7 @@
         "manufacturer": {
           "name": "Thorlabs",
           "abbreviation": null,
-          "registry": {
-            "name": "Research Organization Registry",
-            "abbreviation": "ROR"
-          },
+          "registry": "Research Organization Registry (ROR)",
           "registry_identifier": "04gsnvb07"
         },
         "model": null,
@@ -2236,10 +2167,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2276,10 +2204,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2316,10 +2241,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2356,10 +2278,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2396,10 +2315,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2436,10 +2352,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2476,10 +2389,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2516,10 +2426,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2557,10 +2464,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2611,10 +2515,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2652,10 +2553,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2706,10 +2604,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2747,10 +2642,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2801,10 +2693,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -2967,10 +2856,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -3021,10 +2907,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -3187,10 +3070,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -3241,10 +3121,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -3407,10 +3284,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -3461,10 +3335,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -3627,10 +3498,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -3681,10 +3549,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -3847,10 +3712,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -3901,10 +3763,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -3941,10 +3800,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -3981,10 +3837,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4021,10 +3874,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4061,10 +3911,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4101,10 +3948,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4141,10 +3985,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4181,10 +4022,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4221,10 +4059,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4271,10 +4106,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4321,10 +4153,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4371,10 +4200,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4421,10 +4247,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4471,10 +4294,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4521,10 +4341,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4571,10 +4388,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4621,10 +4435,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4787,10 +4598,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4828,10 +4636,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -4994,10 +4799,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -5035,10 +4837,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -5076,10 +4875,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -5117,10 +4913,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -5158,10 +4951,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -5324,10 +5114,7 @@
           {
             "object_type": "Person",
             "name": "Arielle Leon",
-            "registry": {
-              "name": "Open Researcher and Contributor ID",
-              "abbreviation": "ORCID"
-            },
+            "registry": "Open Researcher and Contributor ID (ORCID)",
             "registry_identifier": null
           }
         ],
@@ -5499,10 +5286,7 @@
       {
         "object_type": "Person",
         "name": "Sam Seid",
-        "registry": {
-          "name": "Open Researcher and Contributor ID",
-          "abbreviation": "ORCID"
-        },
+        "registry": "Open Researcher and Contributor ID (ORCID)",
         "registry_identifier": null
       }
     ],

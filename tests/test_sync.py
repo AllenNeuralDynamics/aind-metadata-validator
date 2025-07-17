@@ -11,6 +11,7 @@ from aind_metadata_validator.sync import (
 
 class TestSync(unittest.TestCase):
 
+    @patch("aind_metadata_validator.sync.client.aggregate_docdb_records")
     @patch("aind_metadata_validator.sync.client.retrieve_docdb_records")
     @patch("aind_metadata_validator.sync.validate_metadata")
     @patch("aind_metadata_validator.sync.rds_client.overwrite_table_with_df")
@@ -25,25 +26,37 @@ class TestSync(unittest.TestCase):
         mock_overwrite_table_with_df,
         mock_validate_metadata,
         mock_retrieve_docdb_records,
+        mock_aggregate_docdb_records,
     ):
         # Mock the responses
-        mock_retrieve_docdb_records.return_value = [
-            {"record": 1},
-            {"record": 2},
+        mock_aggregate_docdb_records.return_value = [
+            {"locations": ["loc1", "loc2"]}
         ]
-        mock_validate_metadata.side_effect = lambda x: {
+        mock_retrieve_docdb_records.return_value = [
+            {"record": 1, "location": "loc1"},
+            {"record": 2, "location": "loc2"},
+        ]
+        mock_validate_metadata.side_effect = lambda x, y: {
             "validated": x["record"]
         }
         mock_read_table.return_value = pd.DataFrame(
-            [{"validated": 1}, {"validated": 2}]
+            [
+                {"validated": 1, "location": "loc1"},
+                {"validated": 2, "location": "loc2"},
+            ]
         )
 
         # Run the function
         run()
 
+        # Check if aggregate_docdb_records was called
+        mock_aggregate_docdb_records.assert_called_once()
+
         # Check if retrieve_docdb_records was called
         mock_retrieve_docdb_records.assert_called_once_with(
-            filter_query={}, limit=0, paginate_batch_size=500
+            filter_query={"location": {"$in": ["loc1", "loc2"]}},
+            limit=0,
+            paginate_batch_size=100,
         )
 
         # Check if validate_metadata was called for each record
@@ -60,9 +73,11 @@ class TestSync(unittest.TestCase):
         # Check if append_df_to_table was not called (since CHUNK_SIZE > len(df))
         mock_append_df_to_table.assert_not_called()
 
-        # Check if read_table was called
-        mock_read_table.assert_called_once_with(RDS_TABLE_NAME)
+        # Check if read_table was called twice (once for initial read, once for verification)
+        self.assertEqual(mock_read_table.call_count, 2)
+        mock_read_table.assert_any_call(RDS_TABLE_NAME)
 
+    @patch("aind_metadata_validator.sync.client.aggregate_docdb_records")
     @patch("aind_metadata_validator.sync.client.retrieve_docdb_records")
     @patch("aind_metadata_validator.sync.validate_metadata")
     @patch("aind_metadata_validator.sync.rds_client.overwrite_table_with_df")
@@ -77,24 +92,41 @@ class TestSync(unittest.TestCase):
         mock_overwrite_table_with_df,
         mock_validate_metadata,
         mock_retrieve_docdb_records,
+        mock_aggregate_docdb_records,
     ):
         # Mock the responses
-        records = [{"record": i} for i in range(CHUNK_SIZE + 1)]
-        mock_retrieve_docdb_records.return_value = records
-        mock_validate_metadata.side_effect = lambda x: {
+        locations = [f"loc{i}" for i in range(CHUNK_SIZE + 1)]
+        mock_aggregate_docdb_records.return_value = [{"locations": locations}]
+        
+        # Create a side effect function that returns records matching the filter
+        def mock_retrieve_side_effect(filter_query, limit=0, paginate_batch_size=100):
+            chunk_locations = filter_query["location"]["$in"]
+            return [
+                {"record": int(loc.replace("loc", "")), "location": loc}
+                for loc in chunk_locations
+                if loc in locations
+            ]
+        
+        mock_retrieve_docdb_records.side_effect = mock_retrieve_side_effect
+        mock_validate_metadata.side_effect = lambda x, y: {
             "validated": x["record"]
         }
         mock_read_table.return_value = pd.DataFrame(
-            [{"validated": i} for i in range(CHUNK_SIZE + 1)]
+            [
+                {"validated": i, "location": f"loc{i}"}
+                for i in range(CHUNK_SIZE + 1)
+            ]
         )
 
         # Run the function
         run()
 
-        # Check if retrieve_docdb_records was called
-        mock_retrieve_docdb_records.assert_called_once_with(
-            filter_query={}, limit=0, paginate_batch_size=500
-        )
+        # Check if aggregate_docdb_records was called
+        mock_aggregate_docdb_records.assert_called_once()
+
+        # Check if retrieve_docdb_records was called multiple times (11 times for 1001 locations in chunks of 100)
+        expected_calls = 11  # 1001 locations / 100 per chunk = 11 chunks
+        self.assertEqual(mock_retrieve_docdb_records.call_count, expected_calls)
 
         # Check if validate_metadata was called for each record
         self.assertEqual(mock_validate_metadata.call_count, CHUNK_SIZE + 1)
@@ -110,8 +142,9 @@ class TestSync(unittest.TestCase):
         # Check if append_df_to_table was called
         self.assertEqual(mock_append_df_to_table.call_count, 1)
 
-        # Check if read_table was called
-        mock_read_table.assert_called_once_with(RDS_TABLE_NAME)
+        # Check if read_table was called twice (once for initial read, once for verification)
+        self.assertEqual(mock_read_table.call_count, 2)
+        mock_read_table.assert_any_call(RDS_TABLE_NAME)
 
 
 if __name__ == "__main__":

@@ -20,17 +20,14 @@ class MappingTest(unittest.TestCase):
     def test_second_mappings(self):
         """Check that mappings are set properly"""
         self.assertEqual(
-            SECOND_LAYER_MAPPING["acquisition"]["protocol_id"], List[str]
+            SECOND_LAYER_MAPPING["acquisition"]["protocol_id"],
+            Optional[List[str]],
         )
         self.assertEqual(
-            SECOND_LAYER_MAPPING["acquisition"]["specimen_id"], str
+            SECOND_LAYER_MAPPING["acquisition"]["specimen_id"], Optional[str]
         )
         self.assertEqual(
             SECOND_LAYER_MAPPING["acquisition"]["notes"], Optional[str]
-        )
-        self.assertEqual(
-            SECOND_LAYER_MAPPING["data_description"]["license"],
-            Literal["CC-BY-4.0"],
         )
 
     def test_unwrap(self):

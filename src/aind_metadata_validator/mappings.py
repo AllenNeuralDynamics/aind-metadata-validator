@@ -15,7 +15,6 @@ from aind_data_schema.core.metadata import CORE_FILES
 EXTRA_FIELDS = [
     "describedBy",
     "schema_version",
-    "license",
     "creation_time",
     "_DESCRIBED_BY_URL",
     "_described_by_url",
