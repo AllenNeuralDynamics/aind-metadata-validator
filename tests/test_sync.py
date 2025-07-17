@@ -106,7 +106,7 @@ class TestSync(unittest.TestCase):
                 for loc in chunk_locations
                 if loc in locations
             ]
-        
+
         mock_retrieve_docdb_records.side_effect = mock_retrieve_side_effect
         mock_validate_metadata.side_effect = lambda x, y: {
             "validated": x["record"]
