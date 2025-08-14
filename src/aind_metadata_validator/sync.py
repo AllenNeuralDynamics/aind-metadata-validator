@@ -13,21 +13,18 @@ import argparse
 API_GATEWAY_HOST = os.getenv(
     "API_GATEWAY_HOST", "api.allenneuraldynamics-test.org"
 )
-DATABASE = os.getenv("DATABASE", "metadata_index_v2")
-COLLECTION = os.getenv("COLLECTION", "data_assets")
 
 OUTPUT_FOLDER = Path(os.getenv("OUTPUT_FOLDER", "/results"))
 OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
 
 client = MetadataDbClient(
     host=API_GATEWAY_HOST,
-    database=DATABASE,
-    collection=COLLECTION,
+    version="v2",
 )
 
 DEV_OR_PROD = "dev" if "test" in API_GATEWAY_HOST else "prod"
 REDSHIFT_SECRETS = f"/aind/{DEV_OR_PROD}/redshift/credentials/readwrite"
-RDS_TABLE_NAME = f"metadata_status_{DEV_OR_PROD}"
+RDS_TABLE_NAME = f"metadata_status_{DEV_OR_PROD}_v2"
 
 CHUNK_SIZE = 1000
 
