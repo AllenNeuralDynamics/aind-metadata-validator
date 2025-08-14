@@ -63,9 +63,15 @@ def run(test_mode: bool = False, force: bool = False):
         uniquelocations = uniquelocations[:10]
 
     logging.info(f"(METADATA VALIDATOR): Retrieved {len(uniquelocations)} records")
-    original_df = rds_client.read_table(RDS_TABLE_NAME)
+    try:
+        original_df = rds_client.read_table(RDS_TABLE_NAME)
+    except Exception as e:
+        logging.error(
+            f"(METADATA VALIDATOR): Error reading from RDS table {RDS_TABLE_NAME}: {e}"
+        )
+        original_df = None
 
-    if "location" not in original_df.columns or len(original_df) < 10:
+    if original_df and ("location" not in original_df.columns or len(original_df) < 10):
         logging.info(
             "(METADATA VALIDATOR): No previous validation results found, starting fresh"
         )
