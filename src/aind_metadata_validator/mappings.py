@@ -18,6 +18,7 @@ EXTRA_FIELDS = [
     "creation_time",
     "_DESCRIBED_BY_URL",
     "_described_by_url",
+    "object_type",
 ]
 
 
