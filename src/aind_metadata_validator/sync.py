@@ -71,7 +71,7 @@ def run(test_mode: bool = False, force: bool = False):
         )
         original_df = None
 
-    if original_df and ("location" not in original_df.columns or len(original_df) < 10):
+    if original_df is not None and ("location" not in original_df.columns or len(original_df) < 10):
         logging.info(
             "(METADATA VALIDATOR): No previous validation results found, starting fresh"
         )
