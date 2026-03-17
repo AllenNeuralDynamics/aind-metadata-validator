@@ -47,6 +47,29 @@ class CoreValidatorTest(unittest.TestCase):
             FileRequirement.REQUIRED,
         )
 
+    def test_core_validator_empty_data_required(self):
+        """Empty data with REQUIRED requirement should return MISSING"""
+        self.assertEqual(
+            validate_core_metadata(
+                "data_description", {}, FileRequirement.REQUIRED
+            ),
+            MetadataState.MISSING,
+        )
+
+    def test_core_validator_empty_data_invalid_requirement(self):
+        """Empty data with an invalid requirement should raise ValueError"""
+
+        class _FakeReq:
+            pass
+
+        self.assertRaises(
+            ValueError,
+            validate_core_metadata,
+            "data_description",
+            {},
+            _FakeReq(),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

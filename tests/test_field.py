@@ -197,6 +197,44 @@ class TestValidateFieldMetadata(unittest.TestCase):
         self.assertEqual(try_instantiate(123, str), MetadataState.PRESENT)
         self.assertEqual(try_instantiate("data", int), MetadataState.PRESENT)
 
+    def test_validate_field_metadata_invalid_name(self):
+        """validate_field_metadata raises ValueError for unknown core file names."""
+        self.assertRaises(
+            ValueError,
+            validate_field_metadata,
+            "not_a_real_file",
+            {},
+        )
+
+    def test_validate_field_metadata_non_dict_data(self):
+        """Non-dict data returns all-MISSING for every expected field."""
+        result = validate_field_metadata("subject", "this is not a dict")
+        self.assertTrue(all(v == MetadataState.MISSING for v in result.values()))
+
+    def test_validate_field_metadata_unknown_field(self):
+        """Fields not present in the schema mapping are silently skipped."""
+        result = validate_field_metadata(
+            "subject", {"xyz_completely_unknown_field": "value"}
+        )
+        # Unknown field is skipped; no entry added for it
+        self.assertNotIn("xyz_completely_unknown_field", result)
+
+    def test_validate_field_fallthrough_origin(self):
+        """validate_field returns PRESENT for origin_types not explicitly handled."""
+        # dict is not Annotated/list/Optional/Union → falls through to PRESENT
+        self.assertEqual(
+            validate_field({"a": 1}, dict, dict[str, str]),
+            MetadataState.PRESENT,
+        )
+
+    def test_validate_field_union_all_missing(self):
+        """validate_field_union returns MISSING when all union types yield MISSING."""
+        # falsy field_data + non-None types → every try_instantiate returns MISSING
+        self.assertEqual(
+            validate_field_union(None, [str, int]),
+            MetadataState.MISSING,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
