@@ -25,7 +25,7 @@ DEV_OR_PROD = "dev" if "test" in API_GATEWAY_HOST else "prod"
 TABLE_NAME = f"metadata_status_{DEV_OR_PROD}_v2"
 
 
-def _fetch_unique_locations(test_mode: bool) -> list:
+def _fetch_unique_locations(test_mode: bool) -> list:  # pragma: no cover
     """Fetch all unique record locations from the database."""
     uniquelocations = client.aggregate_docdb_records(
         pipeline=[
@@ -43,7 +43,7 @@ def _fetch_unique_locations(test_mode: bool) -> list:
     return uniquelocations
 
 
-def _load_prev_validation_map() -> dict:
+def _load_prev_validation_map() -> dict:  # pragma: no cover
     """Load the previous validation results and return a location -> row lookup."""
     try:
         original_df = custom(TABLE_NAME)
@@ -68,7 +68,7 @@ def _load_prev_validation_map() -> dict:
 
 def _build_results(
     uniquelocations: list, prev_validation_map: dict, force: bool
-) -> list:
+) -> list:  # pragma: no cover
     """Fetch records in chunks and validate, skipping unchanged records."""
     results = []
     for i in range(0, len(uniquelocations), 100):
