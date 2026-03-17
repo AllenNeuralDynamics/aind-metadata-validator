@@ -7,7 +7,7 @@ from aind_metadata_validator.mappings import (
     unwrap_annotated,
 )
 from aind_data_schema.core.acquisition import Acquisition
-from typing import Optional, List, Literal, Annotated
+from typing import Optional, List, Annotated
 
 
 class MappingTest(unittest.TestCase):

@@ -1,9 +1,9 @@
 """Main entrypoint"""
 
 from aind_metadata_validator.metadata_validator import validate_metadata
+from aind_metadata_validator import __version__ as version
 from aind_data_access_api.document_db import MetadataDbClient
-from aind_data_access_api.rds_tables import RDSCredentials
-from aind_data_access_api.rds_tables import Client
+from zombie_squirrel import custom
 import pandas as pd
 import os
 import logging
@@ -15,7 +15,6 @@ API_GATEWAY_HOST = os.getenv(
 )
 
 OUTPUT_FOLDER = Path(os.getenv("OUTPUT_FOLDER", "/results"))
-OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
 
 client = MetadataDbClient(
     host=API_GATEWAY_HOST,
@@ -23,33 +22,11 @@ client = MetadataDbClient(
 )
 
 DEV_OR_PROD = "dev" if "test" in API_GATEWAY_HOST else "prod"
-REDSHIFT_SECRETS = f"/aind/{DEV_OR_PROD}/redshift/credentials/readwrite"
-RDS_TABLE_NAME = f"metadata_status_{DEV_OR_PROD}_v2"
-
-CHUNK_SIZE = 1000
-
-rds_client = Client(
-    credentials=RDSCredentials(aws_secrets_name=REDSHIFT_SECRETS),
-)
-
-logging.basicConfig(
-    level=logging.INFO,  # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
-    handlers=[
-        logging.FileHandler(
-            OUTPUT_FOLDER / "app.log"
-        ),  # Write logs to a file named "app.log"
-        logging.StreamHandler(),  # Optional: also log to the console
-    ],
-)
+TABLE_NAME = f"metadata_status_{DEV_OR_PROD}_v2"
 
 
-def run(test_mode: bool = False, force: bool = False):
-    logging.info(
-        f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}"
-    )
-
-    # Get all unique location values in the database
+def _fetch_unique_locations(test_mode: bool) -> list:  # pragma: no cover
+    """Fetch all unique record locations from the database."""
     uniquelocations = client.aggregate_docdb_records(
         pipeline=[
             {"$group": {"_id": None, "locations": {"$addToSet": "$location"}}},
@@ -57,86 +34,100 @@ def run(test_mode: bool = False, force: bool = False):
         ],
     )
     uniquelocations = list(uniquelocations[0]["locations"])
-
+    logging.info(
+        f"(METADATA VALIDATOR): Retrieved {len(uniquelocations)} records"
+    )
     if test_mode:
         logging.info("(METADATA VALIDATOR): Running in test mode")
         uniquelocations = uniquelocations[:10]
+    return uniquelocations
 
-    logging.info(f"(METADATA VALIDATOR): Retrieved {len(uniquelocations)} records")
+
+def _load_prev_validation_map() -> dict:  # pragma: no cover
+    """Load the previous validation results and return a location -> row lookup."""
     try:
-        original_df = rds_client.read_table(RDS_TABLE_NAME)
+        original_df = custom(TABLE_NAME)
     except Exception as e:
         logging.error(
-            f"(METADATA VALIDATOR): Error reading from RDS table {RDS_TABLE_NAME}: {e}"
+            f"(METADATA VALIDATOR): Error reading from table {TABLE_NAME}: {e}"
         )
-        original_df = None
+        return {}
 
-    if original_df is not None and ("location" not in original_df.columns or len(original_df) < 10):
+    if "location" not in original_df.columns or len(original_df) < 10:
         logging.info(
             "(METADATA VALIDATOR): No previous validation results found, starting fresh"
         )
-        original_df = None
+        return {}
 
+    return {
+        row["location"]: row
+        for row in original_df.to_dict(orient="records")
+        if row.get("location")
+    }
+
+
+def _build_results(
+    uniquelocations: list, prev_validation_map: dict, force: bool
+) -> list:  # pragma: no cover
+    """Fetch records in chunks and validate, skipping unchanged records."""
     results = []
-
-    # Go through the unique IDs in chunks of 100
-
     for i in range(0, len(uniquelocations), 100):
         chunk = uniquelocations[i: i + 100]
-
         response = client.retrieve_docdb_records(
             filter_query={"location": {"$in": chunk}},
             limit=0,
             paginate_batch_size=100,
         )
-
         for record in response:
+            location = record.get("location")
+            prev = None if force else prev_validation_map.get(location)
             if (
-                original_df is not None
-                and record["location"] in original_df["location"].values
+                prev is not None
+                and prev.get("_last_modified") == record.get("_last_modified")
+                and prev.get("validator_version") == version
             ):
-                # Get the matching row from the original dataframe as a dictionary
-                prev_validation = original_df.loc[
-                    original_df["location"] == record["location"]
-                ].to_dict(orient="records")[0]
-                results.append(
-                    validate_metadata(
-                        record, prev_validation if not force else None
-                    )
-                )
+                # Record unchanged and validated with current version; reuse
+                results.append(prev)
             else:
-                results.append(validate_metadata(record, None))
+                result = validate_metadata(record, None)
+                result["location"] = location
+                results.append(result)
+    return results
+
+
+def run(test_mode: bool = False, force: bool = False):  # pragma: no cover
+    """Main function to run the metadata validation process."""
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        handlers=[logging.StreamHandler()],
+    )
+    logging.info(
+        f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}"
+    )
+
+    uniquelocations = _fetch_unique_locations(test_mode)
+    prev_validation_map = _load_prev_validation_map()
+    results = _build_results(uniquelocations, prev_validation_map, force)
 
     df = pd.DataFrame(results)
-    # Log results
+    OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
     df.to_csv(OUTPUT_FOLDER / "validation_results.csv", index=False)
-
-    logging.info("(METADATA VALIDATOR) Dataframe built -- pushing to RDS")
+    logging.info("(METADATA VALIDATOR) Dataframe built -- pushing to cache")
 
     if test_mode:
         logging.info(
             "(METADATA VALIDATOR) Running in test mode, would have written table"
         )
     else:
-        if len(df) < CHUNK_SIZE:
-            rds_client.overwrite_table_with_df(df, RDS_TABLE_NAME)
-        else:
-            # chunk into CHUNK_SIZE row chunks
-            logging.info("(METADATA VALIDATOR) Chunking required for RDS")
-            rds_client.overwrite_table_with_df(
-                df[0:CHUNK_SIZE], RDS_TABLE_NAME
-            )
-            for i in range(CHUNK_SIZE, len(df), CHUNK_SIZE):
-                rds_client.append_df_to_table(
-                    df[i : i + CHUNK_SIZE], RDS_TABLE_NAME
-                )
+        custom(TABLE_NAME, df)
 
     # Roundtrip the table and ensure that the number of rows matches
-    df_in_rds = rds_client.read_table(RDS_TABLE_NAME)
+    df_in_cache = custom(TABLE_NAME)
 
-    if not test_mode and (len(df) != len(df_in_rds)):
+    if not test_mode and (len(df) != len(df_in_cache)):
         logging.error(
-            f"(METADATA VALIDATOR) Mismatch in number of rows between input and output: {len(df)} vs {len(df_in_rds)}"
+            f"(METADATA VALIDATOR) Mismatch in number of rows between input and output: {len(df)} vs {len(df_in_cache)}"
         )
     else:
         logging.info("(METADATA VALIDATOR) Success")

@@ -1,4 +1,6 @@
+"""Functions for validating metadata fields against expected classes and types"""
 from enum import Enum
+import types
 from typing import Annotated, Optional, Union, get_args, get_origin
 import logging
 from aind_metadata_validator.utils import MetadataState
@@ -95,7 +97,9 @@ def validate_field(field_data, origin_type, expected_class) -> MetadataState:
     if origin_type is Optional:
         return validate_field_optional(field_data, expected_class)
 
-    if origin_type is Union:
+    if origin_type is Union or (
+        hasattr(types, "UnionType") and origin_type is types.UnionType
+    ):
         union_types = get_args(expected_class)
         return validate_field_union(field_data, union_types)
 

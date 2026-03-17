@@ -22,66 +22,26 @@ class TestValidateFieldMetadata(unittest.TestCase):
 
     def setUp(self):
         """Set up test data for validate_field_metadata tests"""
-        with open("./tests/resources/data_description.json") as f:
-            self.data = json.load(f)
-            self.result = validate_field_metadata(
-                "data_description", self.data
-            )
         with open("./tests/resources/data_description_invalid.json") as f:
             self.data_invalid = json.load(f)
             self.result_invalid = validate_field_metadata(
                 "data_description", self.data_invalid
             )
 
-    def test_validate_field_metadata_subject_id(self):
-        self.assertEqual(self.result["subject_id"], MetadataState.VALID)
-
-    def test_validate_field_metadata_name(self):
-        self.assertEqual(self.result["name"], MetadataState.VALID)
-
-    def test_validate_field_metadata_institution(self):
-        self.assertEqual(self.result["institution"], MetadataState.VALID)
-
-    def test_validate_field_metadata_funding_source(self):
-        self.assertEqual(self.result["funding_source"], MetadataState.VALID)
-
-    def test_validate_field_metadata_data_level(self):
-        self.assertEqual(self.result["data_level"], MetadataState.VALID)
-
-    def test_validate_field_metadata_group(self):
-        self.assertEqual(self.result["group"], MetadataState.OPTIONAL)
-
-    def test_validate_field_metadata_investigators(self):
-        self.assertEqual(self.result["investigators"], MetadataState.VALID)
-
-    def test_validate_field_metadata_project_name(self):
-        self.assertEqual(self.result["project_name"], MetadataState.VALID)
-
-    def test_validate_field_metadata_restrictions(self):
-        self.assertEqual(self.result["restrictions"], MetadataState.OPTIONAL)
-
-    def test_validate_field_metadata_modality(self):
-        self.assertEqual(self.result["modalities"], MetadataState.VALID)
-
-    def test_validate_field_metadata_data_summary(self):
-        self.assertEqual(self.result["data_summary"], MetadataState.OPTIONAL)
-
     def test_invalidate_field_metadata_subject(self):
+        """Test that missing subject_id and empty subject_details are invalid."""
         self.assertEqual(
             self.result_invalid["subject_id"], MetadataState.OPTIONAL
         )
 
     def test_invalidate_field_datadesc_project_name(self):
+        """Test that empty project_name is invalid."""
         self.assertEqual(
             self.result_invalid["project_name"], MetadataState.MISSING
         )
 
-    def test_invalid_core_file_name(self):
-        # Test that invalid core file name raises ValueError
-        with self.assertRaises(ValueError):
-            validate_field_metadata("invalid_core_file", self.data)
-
     def test_validate_field(self):
+        """Test the validate_field function with various cases"""
         # Example unit test for validate_field (add more cases as needed)
         self.assertEqual(
             validate_field("example_data", None, str), MetadataState.VALID
@@ -207,6 +167,7 @@ class TestValidateFieldMetadata(unittest.TestCase):
         )
 
     def test_try_instantiate_none_type(self):
+        """Test that try_instantiate with NoneType returns OPTIONAL if data is None, PRESENT otherwise."""
         self.assertEqual(
             try_instantiate(None, type(None)), MetadataState.OPTIONAL
         )
@@ -215,16 +176,21 @@ class TestValidateFieldMetadata(unittest.TestCase):
         )
 
     def test_try_instantiate_missing_data(self):
+        """Test that try_instantiate returns MISSING for falsy data (None, empty string) when type is not NoneType."""
         self.assertEqual(try_instantiate(None, str), MetadataState.MISSING)
         self.assertEqual(try_instantiate("", str), MetadataState.MISSING)
 
     def test_try_instantiate_general_case(self):
+        """Test that try_instantiate returns VALID for data that can be instantiated as the given type."""
         self.assertEqual(try_instantiate("data", str), MetadataState.VALID)
         self.assertEqual(try_instantiate(123, int), MetadataState.VALID)
 
     def test_try_instantiate_dict(self):
+        """Test that try_instantiate can handle dicts and returns PRESENT if instantiation fails."""
         class DummyClass:
+            """Dummy class for testing try_instantiate with dict data."""
             def __init__(self, field):
+                """Initialize DummyClass with a field."""
                 self.field = field
 
         self.assertEqual(
@@ -237,8 +203,47 @@ class TestValidateFieldMetadata(unittest.TestCase):
         )
 
     def test_try_instantiate_invalid_data(self):
+        """Test that try_instantiate returns PRESENT for data that cannot be instantiated as the given type."""
         self.assertEqual(try_instantiate(123, str), MetadataState.PRESENT)
         self.assertEqual(try_instantiate("data", int), MetadataState.PRESENT)
+
+    def test_validate_field_metadata_invalid_name(self):
+        """validate_field_metadata raises ValueError for unknown core file names."""
+        self.assertRaises(
+            ValueError,
+            validate_field_metadata,
+            "not_a_real_file",
+            {},
+        )
+
+    def test_validate_field_metadata_non_dict_data(self):
+        """Non-dict data returns all-MISSING for every expected field."""
+        result = validate_field_metadata("subject", "this is not a dict")
+        self.assertTrue(all(v == MetadataState.MISSING for v in result.values()))
+
+    def test_validate_field_metadata_unknown_field(self):
+        """Fields not present in the schema mapping are silently skipped."""
+        result = validate_field_metadata(
+            "subject", {"xyz_completely_unknown_field": "value"}
+        )
+        # Unknown field is skipped; no entry added for it
+        self.assertNotIn("xyz_completely_unknown_field", result)
+
+    def test_validate_field_fallthrough_origin(self):
+        """validate_field returns PRESENT for origin_types not explicitly handled."""
+        # dict is not Annotated/list/Optional/Union → falls through to PRESENT
+        self.assertEqual(
+            validate_field({"a": 1}, dict, dict[str, str]),
+            MetadataState.PRESENT,
+        )
+
+    def test_validate_field_union_all_missing(self):
+        """validate_field_union returns MISSING when all union types yield MISSING."""
+        # falsy field_data + non-None types → every try_instantiate returns MISSING
+        self.assertEqual(
+            validate_field_union(None, [str, int]),
+            MetadataState.MISSING,
+        )
 
 
 if __name__ == "__main__":

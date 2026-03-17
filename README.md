@@ -34,7 +34,6 @@ class MetadataState(int, Enum):
     PRESENT = 1  # present
     OPTIONAL = 0  # missing, but it's optional
     MISSING = -1  # missing, and it's required
-    EXCLUDED = -2  # excluded for all modalities in the metadata
     CORRUPT = -3  # corrupt, can't be loaded from json
 
 
