@@ -132,7 +132,6 @@ class TestSync(unittest.TestCase):
         run(test_mode=True)
 
         # custom should be called for _load_prev_validation_map and roundtrip only (not write)
-        calls = [str(c) for c in mock_custom.call_args_list]
         write_calls = [c for c in mock_custom.call_args_list if c.args and len(c.args) > 1]
         self.assertEqual(len(write_calls), 0)
 
