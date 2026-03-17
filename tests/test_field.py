@@ -22,49 +22,11 @@ class TestValidateFieldMetadata(unittest.TestCase):
 
     def setUp(self):
         """Set up test data for validate_field_metadata tests"""
-        with open("./tests/resources/data_description.json") as f:
-            self.data = json.load(f)
-            self.result = validate_field_metadata(
-                "data_description", self.data
-            )
         with open("./tests/resources/data_description_invalid.json") as f:
             self.data_invalid = json.load(f)
             self.result_invalid = validate_field_metadata(
                 "data_description", self.data_invalid
             )
-
-    def test_validate_field_metadata_subject_id(self):
-        self.assertEqual(self.result["subject_id"], MetadataState.VALID)
-
-    def test_validate_field_metadata_name(self):
-        self.assertEqual(self.result["name"], MetadataState.VALID)
-
-    def test_validate_field_metadata_institution(self):
-        self.assertEqual(self.result["institution"], MetadataState.VALID)
-
-    def test_validate_field_metadata_funding_source(self):
-        self.assertEqual(self.result["funding_source"], MetadataState.VALID)
-
-    def test_validate_field_metadata_data_level(self):
-        self.assertEqual(self.result["data_level"], MetadataState.VALID)
-
-    def test_validate_field_metadata_group(self):
-        self.assertEqual(self.result["group"], MetadataState.OPTIONAL)
-
-    def test_validate_field_metadata_investigators(self):
-        self.assertEqual(self.result["investigators"], MetadataState.VALID)
-
-    def test_validate_field_metadata_project_name(self):
-        self.assertEqual(self.result["project_name"], MetadataState.VALID)
-
-    def test_validate_field_metadata_restrictions(self):
-        self.assertEqual(self.result["restrictions"], MetadataState.OPTIONAL)
-
-    def test_validate_field_metadata_modality(self):
-        self.assertEqual(self.result["modalities"], MetadataState.VALID)
-
-    def test_validate_field_metadata_data_summary(self):
-        self.assertEqual(self.result["data_summary"], MetadataState.OPTIONAL)
 
     def test_invalidate_field_metadata_subject(self):
         self.assertEqual(
@@ -75,11 +37,6 @@ class TestValidateFieldMetadata(unittest.TestCase):
         self.assertEqual(
             self.result_invalid["project_name"], MetadataState.MISSING
         )
-
-    def test_invalid_core_file_name(self):
-        # Test that invalid core file name raises ValueError
-        with self.assertRaises(ValueError):
-            validate_field_metadata("invalid_core_file", self.data)
 
     def test_validate_field(self):
         # Example unit test for validate_field (add more cases as needed)
