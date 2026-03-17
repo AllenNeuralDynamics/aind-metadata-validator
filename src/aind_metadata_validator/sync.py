@@ -1,6 +1,7 @@
 """Main entrypoint"""
 
 from aind_metadata_validator.metadata_validator import validate_metadata
+from aind_metadata_validator import __version__ as version
 from aind_data_access_api.document_db import MetadataDbClient
 from zombie_squirrel import custom
 import pandas as pd
@@ -73,6 +74,14 @@ def run(test_mode: bool = False, force: bool = False):
         )
         original_df = None
 
+    # Build a fast lookup from location -> existing validation row
+    prev_validation_map = {}
+    if original_df is not None:
+        for row in original_df.to_dict(orient="records"):
+            loc = row.get("location")
+            if loc:
+                prev_validation_map[loc] = row
+
     results = []
 
     # Go through the unique IDs in chunks of 100
@@ -87,21 +96,22 @@ def run(test_mode: bool = False, force: bool = False):
         )
 
         for record in response:
+            location = record.get("location")
+            prev = None if force else prev_validation_map.get(location)
+
             if (
-                original_df is not None
-                and record["location"] in original_df["location"].values
+                not force
+                and prev is not None
+                and prev.get("_last_modified") == record.get("_last_modified")
+                and prev.get("validator_version") == version
             ):
-                # Get the matching row from the original dataframe as a dictionary
-                prev_validation = original_df.loc[
-                    original_df["location"] == record["location"]
-                ].to_dict(orient="records")[0]
-                results.append(
-                    validate_metadata(
-                        record, prev_validation if not force else None
-                    )
-                )
+                # Record hasn't changed and was validated with the current
+                # validator version; reuse the cached result as-is
+                results.append(prev)
             else:
-                results.append(validate_metadata(record, None))
+                result = validate_metadata(record, None)
+                result["location"] = location
+                results.append(result)
 
     df = pd.DataFrame(results)
     # Log results
