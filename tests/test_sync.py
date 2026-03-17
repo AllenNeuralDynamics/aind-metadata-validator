@@ -47,7 +47,5 @@ class TestSync(unittest.TestCase):
         self.assertEqual(results, [prev])
 
 
-
-
 if __name__ == "__main__":
     unittest.main()
