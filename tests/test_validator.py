@@ -110,10 +110,6 @@ class ValidatorTest(unittest.TestCase):
 
         for field in results:
             if field not in ["_last_modified", "validator_version"]:
-                if results[field] != expected[field]:
-                    print(
-                        f"Field '{field}' has status {results[field]}, expected {expected[field]}"
-                    )
                 self.assertEqual(results[field], expected[field])
 
     def test_prev_validation_returns_early(self):
