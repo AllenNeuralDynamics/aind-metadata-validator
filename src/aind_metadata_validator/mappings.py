@@ -1,4 +1,4 @@
-# First level metadata models
+"""Mappings of metadata fields to expected classes and types for validation"""
 from typing import Annotated, get_args, Union, get_origin
 
 from aind_data_schema.core.metadata import Metadata
@@ -63,6 +63,7 @@ def gen_second_layer_mapping(model_class_list):
 
 
 def unwrap_annotated(field_type):
+    """Unwrap an Annotated type to get the underlying type"""
     if get_origin(field_type) is Annotated:
         return get_args(field_type)[0]
     return field_type

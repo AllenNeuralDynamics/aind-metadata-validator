@@ -108,6 +108,7 @@ def _build_results(
 
 
 def run(test_mode: bool = False, force: bool = False):
+    """Main function to run the metadata validation process."""
     logging.info(
         f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}"
     )

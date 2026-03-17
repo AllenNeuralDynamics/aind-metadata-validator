@@ -1,12 +1,15 @@
+"""Utility fields"""
 from enum import Enum
 
 
 class FileRequirement(Enum):
+    """Enum to represent file requirement status."""
     REQUIRED = 1
     OPTIONAL = 0
 
 
 class MetadataState(int, Enum):
+    """Enum to represent the validation state of metadata records."""
     VALID = 2  # validates as it's class
     PRESENT = 1  # present
     OPTIONAL = 0  # missing, but it's optional
