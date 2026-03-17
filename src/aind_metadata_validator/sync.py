@@ -15,7 +15,6 @@ API_GATEWAY_HOST = os.getenv(
 )
 
 OUTPUT_FOLDER = Path(os.getenv("OUTPUT_FOLDER", "/results"))
-OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
 
 client = MetadataDbClient(
     host=API_GATEWAY_HOST,
@@ -24,17 +23,6 @@ client = MetadataDbClient(
 
 DEV_OR_PROD = "dev" if "test" in API_GATEWAY_HOST else "prod"
 TABLE_NAME = f"metadata_status_{DEV_OR_PROD}_v2"
-
-logging.basicConfig(
-    level=logging.INFO,  # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
-    handlers=[
-        logging.FileHandler(
-            OUTPUT_FOLDER / "app.log"
-        ),  # Write logs to a file named "app.log"
-        logging.StreamHandler(),  # Optional: also log to the console
-    ],
-)
 
 
 def _fetch_unique_locations(test_mode: bool) -> list:
@@ -109,6 +97,15 @@ def _build_results(
 
 def run(test_mode: bool = False, force: bool = False):
     """Main function to run the metadata validation process."""
+    OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        handlers=[
+            logging.FileHandler(OUTPUT_FOLDER / "app.log"),
+            logging.StreamHandler(),
+        ],
+    )
     logging.info(
         f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}"
     )
