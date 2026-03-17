@@ -45,8 +45,6 @@ def _validate_core_files(
             results[core_file_name] = MetadataState.MISSING
         elif file_requirements[core_file_name] == FileRequirement.OPTIONAL:
             results[core_file_name] = MetadataState.OPTIONAL
-        elif file_requirements[core_file_name] == FileRequirement.EXCLUDED:
-            results[core_file_name] = MetadataState.EXCLUDED
         else:
             logging.error(
                 f"(METADATA_VALIDATOR): Unknown file requirement for {core_file_name}"
@@ -74,7 +72,6 @@ def _validate_fields(
             state_map = {
                 FileRequirement.REQUIRED: MetadataState.MISSING,
                 FileRequirement.OPTIONAL: MetadataState.OPTIONAL,
-                FileRequirement.EXCLUDED: MetadataState.EXCLUDED,
             }
             field_results = {
                 field: state_map[requirement] for field in expected_fields
