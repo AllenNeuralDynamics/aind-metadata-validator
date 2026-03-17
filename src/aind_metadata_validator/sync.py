@@ -37,12 +37,8 @@ logging.basicConfig(
 )
 
 
-def run(test_mode: bool = False, force: bool = False):
-    logging.info(
-        f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}"
-    )
-
-    # Get all unique location values in the database
+def _fetch_unique_locations(test_mode: bool) -> list:
+    """Fetch all unique record locations from the database."""
     uniquelocations = client.aggregate_docdb_records(
         pipeline=[
             {"$group": {"_id": None, "locations": {"$addToSet": "$location"}}},
@@ -50,73 +46,78 @@ def run(test_mode: bool = False, force: bool = False):
         ],
     )
     uniquelocations = list(uniquelocations[0]["locations"])
-
-    if test_mode:
-        logging.info("(METADATA VALIDATOR): Running in test mode")
-        uniquelocations = uniquelocations[:10]
-
     logging.info(
         f"(METADATA VALIDATOR): Retrieved {len(uniquelocations)} records"
     )
+    if test_mode:
+        logging.info("(METADATA VALIDATOR): Running in test mode")
+        uniquelocations = uniquelocations[:10]
+    return uniquelocations
+
+
+def _load_prev_validation_map() -> dict:
+    """Load the previous validation results and return a location -> row lookup."""
     try:
         original_df = custom(TABLE_NAME)
     except Exception as e:
         logging.error(
             f"(METADATA VALIDATOR): Error reading from table {TABLE_NAME}: {e}"
         )
-        original_df = None
+        return {}
 
-    if original_df is not None and (
-        "location" not in original_df.columns or len(original_df) < 10
-    ):
+    if "location" not in original_df.columns or len(original_df) < 10:
         logging.info(
             "(METADATA VALIDATOR): No previous validation results found, starting fresh"
         )
-        original_df = None
+        return {}
 
-    # Build a fast lookup from location -> existing validation row
-    prev_validation_map = {}
-    if original_df is not None:
-        for row in original_df.to_dict(orient="records"):
-            loc = row.get("location")
-            if loc:
-                prev_validation_map[loc] = row
+    return {
+        row["location"]: row
+        for row in original_df.to_dict(orient="records")
+        if row.get("location")
+    }
 
+
+def _build_results(
+    uniquelocations: list, prev_validation_map: dict, force: bool
+) -> list:
+    """Fetch records in chunks and validate, skipping unchanged records."""
     results = []
-
-    # Go through the unique IDs in chunks of 100
-
     for i in range(0, len(uniquelocations), 100):
         chunk = uniquelocations[i: i + 100]
-
         response = client.retrieve_docdb_records(
             filter_query={"location": {"$in": chunk}},
             limit=0,
             paginate_batch_size=100,
         )
-
         for record in response:
             location = record.get("location")
             prev = None if force else prev_validation_map.get(location)
-
             if (
-                not force
-                and prev is not None
+                prev is not None
                 and prev.get("_last_modified") == record.get("_last_modified")
                 and prev.get("validator_version") == version
             ):
-                # Record hasn't changed and was validated with the current
-                # validator version; reuse the cached result as-is
+                # Record unchanged and validated with current version; reuse
                 results.append(prev)
             else:
                 result = validate_metadata(record, None)
                 result["location"] = location
                 results.append(result)
+    return results
+
+
+def run(test_mode: bool = False, force: bool = False):
+    logging.info(
+        f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}"
+    )
+
+    uniquelocations = _fetch_unique_locations(test_mode)
+    prev_validation_map = _load_prev_validation_map()
+    results = _build_results(uniquelocations, prev_validation_map, force)
 
     df = pd.DataFrame(results)
-    # Log results
     df.to_csv(OUTPUT_FOLDER / "validation_results.csv", index=False)
-
     logging.info("(METADATA VALIDATOR) Dataframe built -- pushing to cache")
 
     if test_mode:
