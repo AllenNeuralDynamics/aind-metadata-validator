@@ -29,16 +29,19 @@ class TestValidateFieldMetadata(unittest.TestCase):
             )
 
     def test_invalidate_field_metadata_subject(self):
+        """Test that missing subject_id and empty subject_details are invalid."""
         self.assertEqual(
             self.result_invalid["subject_id"], MetadataState.OPTIONAL
         )
 
     def test_invalidate_field_datadesc_project_name(self):
+        """Test that empty project_name is invalid."""
         self.assertEqual(
             self.result_invalid["project_name"], MetadataState.MISSING
         )
 
     def test_validate_field(self):
+        """Test the validate_field function with various cases"""
         # Example unit test for validate_field (add more cases as needed)
         self.assertEqual(
             validate_field("example_data", None, str), MetadataState.VALID
@@ -164,6 +167,7 @@ class TestValidateFieldMetadata(unittest.TestCase):
         )
 
     def test_try_instantiate_none_type(self):
+        """Test that try_instantiate with NoneType returns OPTIONAL if data is None, PRESENT otherwise."""
         self.assertEqual(
             try_instantiate(None, type(None)), MetadataState.OPTIONAL
         )
@@ -172,16 +176,21 @@ class TestValidateFieldMetadata(unittest.TestCase):
         )
 
     def test_try_instantiate_missing_data(self):
+        """Test that try_instantiate returns MISSING for falsy data (None, empty string) when type is not NoneType."""
         self.assertEqual(try_instantiate(None, str), MetadataState.MISSING)
         self.assertEqual(try_instantiate("", str), MetadataState.MISSING)
 
     def test_try_instantiate_general_case(self):
+        """Test that try_instantiate returns VALID for data that can be instantiated as the given type."""
         self.assertEqual(try_instantiate("data", str), MetadataState.VALID)
         self.assertEqual(try_instantiate(123, int), MetadataState.VALID)
 
     def test_try_instantiate_dict(self):
+        """Test that try_instantiate can handle dicts and returns PRESENT if instantiation fails."""
         class DummyClass:
+            """Dummy class for testing try_instantiate with dict data."""
             def __init__(self, field):
+                """Initialize DummyClass with a field."""
                 self.field = field
 
         self.assertEqual(
@@ -194,6 +203,7 @@ class TestValidateFieldMetadata(unittest.TestCase):
         )
 
     def test_try_instantiate_invalid_data(self):
+        """Test that try_instantiate returns PRESENT for data that cannot be instantiated as the given type."""
         self.assertEqual(try_instantiate(123, str), MetadataState.PRESENT)
         self.assertEqual(try_instantiate("data", int), MetadataState.PRESENT)
 

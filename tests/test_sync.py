@@ -1,3 +1,4 @@
+"""Unit tests for the sync module of aind_metadata_validator."""
 import unittest
 from unittest.mock import patch
 import pandas as pd
@@ -13,6 +14,7 @@ from aind_metadata_validator.sync import (
 
 
 class TestSync(unittest.TestCase):
+    """Unit tests for the sync module."""
 
     @patch("aind_metadata_validator.sync.client.aggregate_docdb_records")
     @patch("aind_metadata_validator.sync.client.retrieve_docdb_records")
@@ -27,6 +29,7 @@ class TestSync(unittest.TestCase):
         mock_retrieve_docdb_records,
         mock_aggregate_docdb_records,
     ):
+        """Test the run function with mocked dependencies."""
         existing_df = pd.DataFrame(
             [
                 {"validated": 1, "location": "loc1"},

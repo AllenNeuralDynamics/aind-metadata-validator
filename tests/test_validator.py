@@ -156,6 +156,7 @@ class ValidatorTest(unittest.TestCase):
         """Test that _validate_core_files handles an unknown file requirement."""
 
         class _FakeRequirement:
+            """Fake requirement class that is not a valid FileRequirement."""
             value = "unknown"
 
         results = {}

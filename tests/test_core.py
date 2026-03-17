@@ -60,6 +60,7 @@ class CoreValidatorTest(unittest.TestCase):
         """Empty data with an invalid requirement should raise ValueError"""
 
         class _FakeReq:
+            """Fake requirement class that is not a valid FileRequirement."""
             pass
 
         self.assertRaises(
