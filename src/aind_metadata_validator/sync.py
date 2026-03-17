@@ -54,7 +54,9 @@ def run(test_mode: bool = False, force: bool = False):
         logging.info("(METADATA VALIDATOR): Running in test mode")
         uniquelocations = uniquelocations[:10]
 
-    logging.info(f"(METADATA VALIDATOR): Retrieved {len(uniquelocations)} records")
+    logging.info(
+        f"(METADATA VALIDATOR): Retrieved {len(uniquelocations)} records"
+    )
     try:
         original_df = custom(TABLE_NAME)
     except Exception as e:
@@ -63,7 +65,9 @@ def run(test_mode: bool = False, force: bool = False):
         )
         original_df = None
 
-    if original_df is not None and ("location" not in original_df.columns or len(original_df) < 10):
+    if original_df is not None and (
+        "location" not in original_df.columns or len(original_df) < 10
+    ):
         logging.info(
             "(METADATA VALIDATOR): No previous validation results found, starting fresh"
         )

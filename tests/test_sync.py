@@ -30,7 +30,9 @@ class TestSync(unittest.TestCase):
             ]
         )
         # custom(name) returns the df; custom(name, df) is a write and returns None
-        mock_custom.side_effect = lambda name, df=None: existing_df if df is None else None
+        mock_custom.side_effect = lambda name, df=None: (
+            existing_df if df is None else None
+        )
 
         # Mock the responses
         mock_aggregate_docdb_records.return_value = [
