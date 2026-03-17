@@ -2,7 +2,14 @@
 
 import json
 import unittest
-from aind_metadata_validator.metadata_validator import validate_metadata
+from unittest.mock import patch
+from aind_data_schema.core.metadata import CORE_FILES
+from aind_metadata_validator import __version__ as version
+from aind_metadata_validator.metadata_validator import (
+    validate_metadata,
+    _validate_core_files,
+)
+from aind_metadata_validator.utils import FileRequirement, MetadataState
 
 
 class ValidatorTest(unittest.TestCase):
@@ -108,6 +115,61 @@ class ValidatorTest(unittest.TestCase):
                         f"Field '{field}' has status {results[field]}, expected {expected[field]}"
                     )
                 self.assertEqual(results[field], expected[field])
+
+    def test_prev_validation_returns_early(self):
+        """Test that validate_metadata returns early when prev_validation matches."""
+        prev = {
+            "validator_version": version,
+            "_last_modified": self.data["_last_modified"],
+            "_id": self.data["_id"],
+        }
+        result = validate_metadata(
+            {
+                "_last_modified": self.data["_last_modified"],
+                "_id": self.data["_id"],
+                "name": self.data["name"],
+            },
+            prev_validation=prev,
+        )
+        self.assertEqual(result, prev)
+
+    def test_metadata_validate_exception(self):
+        """Test that a Metadata.model_validate exception results in PRESENT state."""
+        with patch(
+            "aind_metadata_validator.metadata_validator.Metadata.model_validate",
+            side_effect=Exception("Parse error"),
+        ):
+            result = validate_metadata(self.data)
+            self.assertEqual(result["metadata"], MetadataState.PRESENT)
+
+    def test_missing_core_files(self):
+        """Test validation with required and optional core files absent from data."""
+        # 'subject' key in data makes data_description/procedures/instrument/acquisition REQUIRED.
+        # All other core files are OPTIONAL and also absent → covers lines 44-47 and 63.
+        minimal_data = {
+            "_id": "test-missing-id",
+            "_last_modified": "2025-01-01T00:00:00.000Z",
+            "name": "test",
+            "subject": {"subject_id": "123"},
+        }
+        result = validate_metadata(minimal_data)
+        self.assertEqual(result["data_description"], MetadataState.MISSING)
+        self.assertEqual(result["model"], MetadataState.OPTIONAL)
+
+    def test_unknown_file_requirement_logs_error(self):
+        """Test that _validate_core_files handles an unknown file requirement."""
+
+        class _FakeRequirement:
+            value = "unknown"
+
+        results = {}
+        fake_requirements = {core: FileRequirement.OPTIONAL for core in CORE_FILES}
+        first_core = CORE_FILES[0]
+        fake_requirements[first_core] = _FakeRequirement()
+        # Empty data → no core file is "in data", hitting elif/else branches
+        _validate_core_files({}, results, fake_requirements)
+        # The else branch logs an error but does not set a result
+        self.assertNotIn(first_core, results)
 
 
 if __name__ == "__main__":
