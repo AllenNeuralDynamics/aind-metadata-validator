@@ -2,8 +2,7 @@
 
 from aind_metadata_validator.metadata_validator import validate_metadata
 from aind_data_access_api.document_db import MetadataDbClient
-from aind_data_access_api.rds_tables import RDSCredentials
-from aind_data_access_api.rds_tables import Client
+from zombie_squirrel import custom
 import pandas as pd
 import os
 import logging
@@ -23,14 +22,7 @@ client = MetadataDbClient(
 )
 
 DEV_OR_PROD = "dev" if "test" in API_GATEWAY_HOST else "prod"
-REDSHIFT_SECRETS = f"/aind/{DEV_OR_PROD}/redshift/credentials/readwrite"
-RDS_TABLE_NAME = f"metadata_status_{DEV_OR_PROD}_v2"
-
-CHUNK_SIZE = 1000
-
-rds_client = Client(
-    credentials=RDSCredentials(aws_secrets_name=REDSHIFT_SECRETS),
-)
+TABLE_NAME = f"metadata_status_{DEV_OR_PROD}_v2"
 
 logging.basicConfig(
     level=logging.INFO,  # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
@@ -64,10 +56,10 @@ def run(test_mode: bool = False, force: bool = False):
 
     logging.info(f"(METADATA VALIDATOR): Retrieved {len(uniquelocations)} records")
     try:
-        original_df = rds_client.read_table(RDS_TABLE_NAME)
+        original_df = custom(TABLE_NAME)
     except Exception as e:
         logging.error(
-            f"(METADATA VALIDATOR): Error reading from RDS table {RDS_TABLE_NAME}: {e}"
+            f"(METADATA VALIDATOR): Error reading from table {TABLE_NAME}: {e}"
         )
         original_df = None
 
@@ -111,32 +103,21 @@ def run(test_mode: bool = False, force: bool = False):
     # Log results
     df.to_csv(OUTPUT_FOLDER / "validation_results.csv", index=False)
 
-    logging.info("(METADATA VALIDATOR) Dataframe built -- pushing to RDS")
+    logging.info("(METADATA VALIDATOR) Dataframe built -- pushing to cache")
 
     if test_mode:
         logging.info(
             "(METADATA VALIDATOR) Running in test mode, would have written table"
         )
     else:
-        if len(df) < CHUNK_SIZE:
-            rds_client.overwrite_table_with_df(df, RDS_TABLE_NAME)
-        else:
-            # chunk into CHUNK_SIZE row chunks
-            logging.info("(METADATA VALIDATOR) Chunking required for RDS")
-            rds_client.overwrite_table_with_df(
-                df[0:CHUNK_SIZE], RDS_TABLE_NAME
-            )
-            for i in range(CHUNK_SIZE, len(df), CHUNK_SIZE):
-                rds_client.append_df_to_table(
-                    df[i : i + CHUNK_SIZE], RDS_TABLE_NAME
-                )
+        custom(TABLE_NAME, df)
 
     # Roundtrip the table and ensure that the number of rows matches
-    df_in_rds = rds_client.read_table(RDS_TABLE_NAME)
+    df_in_cache = custom(TABLE_NAME)
 
-    if not test_mode and (len(df) != len(df_in_rds)):
+    if not test_mode and (len(df) != len(df_in_cache)):
         logging.error(
-            f"(METADATA VALIDATOR) Mismatch in number of rows between input and output: {len(df)} vs {len(df_in_rds)}"
+            f"(METADATA VALIDATOR) Mismatch in number of rows between input and output: {len(df)} vs {len(df_in_cache)}"
         )
     else:
         logging.info("(METADATA VALIDATOR) Success")

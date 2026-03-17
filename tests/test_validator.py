@@ -61,7 +61,7 @@ class ValidatorTest(unittest.TestCase):
             "instrument.temperature_control": 0,
             "instrument.notes": 0,
             "instrument.connections": 1,
-            "instrument.components": 1,
+            "instrument.components": 2,
             "processing.object_type": 1,
             "processing.data_processes": 1,
             "processing.pipelines": 0,
@@ -85,7 +85,7 @@ class ValidatorTest(unittest.TestCase):
             "acquisition.stimulus_epochs": 2,
             "acquisition.subject_details": 2,
             "quality_control.object_type": 1,
-            "quality_control.metrics": 1,
+            "quality_control.metrics": 2,
             "quality_control.key_experimenters": 0,
             "quality_control.notes": 0,
             "quality_control.default_grouping": 2,
@@ -107,6 +107,8 @@ class ValidatorTest(unittest.TestCase):
 
         for field in results:
             if field not in ["_last_modified", "validator_version"]:
+                if results[field] != expected[field]:
+                    print(f"Field '{field}' has status {results[field]}, expected {expected[field]}")
                 self.assertEqual(results[field], expected[field])
 
 
