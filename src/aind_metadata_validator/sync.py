@@ -95,16 +95,12 @@ def _build_results(
     return results
 
 
-def run(test_mode: bool = False, force: bool = False):
+def run(test_mode: bool = False, force: bool = False):  # pragma: no cover
     """Main function to run the metadata validation process."""
-    OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[
-            logging.FileHandler(OUTPUT_FOLDER / "app.log"),
-            logging.StreamHandler(),
-        ],
+        handlers=[logging.StreamHandler()],
     )
     logging.info(
         f"(METADATA VALIDATOR): Starting run, targeting: {API_GATEWAY_HOST}"
@@ -115,6 +111,7 @@ def run(test_mode: bool = False, force: bool = False):
     results = _build_results(uniquelocations, prev_validation_map, force)
 
     df = pd.DataFrame(results)
+    OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
     df.to_csv(OUTPUT_FOLDER / "validation_results.csv", index=False)
     logging.info("(METADATA VALIDATOR) Dataframe built -- pushing to cache")
 
