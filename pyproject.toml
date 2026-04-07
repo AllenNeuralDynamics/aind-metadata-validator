@@ -20,7 +20,7 @@ dependencies = [
     'pydantic',
     'aind-data-schema>=2.6.0',
     'aind-data-access-api[docdb]',
-    'zombie-squirrel>=0.16.3,<1',
+    'zombie-squirrel>=0.16.4,<1',
     'pandas',
 ]
 

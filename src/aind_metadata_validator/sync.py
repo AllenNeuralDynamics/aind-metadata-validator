@@ -23,6 +23,7 @@ client = MetadataDbClient(
 
 DEV_OR_PROD = "dev" if "test" in API_GATEWAY_HOST else "prod"
 TABLE_NAME = f"metadata_status_{DEV_OR_PROD}_v2"
+CHUNK_SIZE = 50
 
 
 def _fetch_unique_locations(test_mode: bool) -> list:  # pragma: no cover
@@ -71,12 +72,11 @@ def _build_results(
 ) -> list:  # pragma: no cover
     """Fetch records in chunks and validate, skipping unchanged records."""
     results = []
-    for i in range(0, len(uniquelocations), 100):
-        chunk = uniquelocations[i: i + 100]
+    for i in range(0, len(uniquelocations), CHUNK_SIZE):
+        chunk = uniquelocations[i: i + CHUNK_SIZE]
         response = client.retrieve_docdb_records(
             filter_query={"location": {"$in": chunk}},
             limit=0,
-            paginate_batch_size=100,
         )
         for record in response:
             location = record.get("location")
