@@ -1,5 +1,6 @@
 """Mappings of metadata fields to expected classes and types for validation"""
-from typing import Annotated, get_args, Union, get_origin
+
+from typing import Annotated, get_args, Union, get_origin, get_type_hints
 
 from aind_data_schema.core.metadata import Metadata
 from aind_data_schema.core.acquisition import Acquisition
@@ -51,7 +52,9 @@ def gen_second_layer_mapping(model_class_list):
 
     for model_class in model_class_list:
         mapping = {}
-        for field_name, field_type in model_class.__annotations__.items():
+        for field_name, field_type in get_type_hints(
+            model_class, include_extras=True
+        ).items():
             if field_name in EXTRA_FIELDS:
                 continue
 

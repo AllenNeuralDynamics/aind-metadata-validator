@@ -7,7 +7,7 @@ from aind_metadata_validator.mappings import (
     unwrap_annotated,
 )
 from aind_data_schema.core.acquisition import Acquisition
-from typing import Optional, List, Annotated
+from typing import Optional, List, Annotated, Union
 
 
 class MappingTest(unittest.TestCase):
@@ -24,7 +24,8 @@ class MappingTest(unittest.TestCase):
             Optional[List[str]],
         )
         self.assertEqual(
-            SECOND_LAYER_MAPPING["acquisition"]["specimen_id"], Optional[str]
+            SECOND_LAYER_MAPPING["acquisition"]["specimen_id"],
+            Union[str, List[str], None],
         )
         self.assertEqual(
             SECOND_LAYER_MAPPING["acquisition"]["notes"], Optional[str]

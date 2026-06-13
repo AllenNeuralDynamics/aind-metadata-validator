@@ -157,10 +157,13 @@ class ValidatorTest(unittest.TestCase):
 
         class _FakeRequirement:
             """Fake requirement class that is not a valid FileRequirement."""
+
             value = "unknown"
 
         results = {}
-        fake_requirements = {core: FileRequirement.OPTIONAL for core in CORE_FILES}
+        fake_requirements = {
+            core: FileRequirement.OPTIONAL for core in CORE_FILES
+        }
         first_core = CORE_FILES[0]
         fake_requirements[first_core] = _FakeRequirement()
         # Empty data → no core file is "in data", hitting elif/else branches

@@ -1,4 +1,5 @@
 """Unit tests for the sync module of aind_metadata_validator."""
+
 import unittest
 from unittest.mock import patch
 import pandas as pd
@@ -20,7 +21,10 @@ class TestSync(unittest.TestCase):
         result = _fetch_unique_locations(test_mode=True)
         self.assertEqual(len(result), 10)
 
-    @patch("aind_metadata_validator.sync.custom", side_effect=Exception("DB error"))
+    @patch(
+        "aind_metadata_validator.sync.custom",
+        side_effect=Exception("DB error"),
+    )
     def test_load_prev_validation_map_exception(self, _mock):
         """Exception reading from the table should return an empty dict."""
         result = _load_prev_validation_map()
@@ -41,7 +45,11 @@ class TestSync(unittest.TestCase):
     def test_build_results_reuses_prev(self, mock_retrieve):
         """A matching prev record should be reused without re-validating."""
         record = {"location": "loc1", "_last_modified": "2025-01-01"}
-        prev = {"location": "loc1", "_last_modified": "2025-01-01", "validator_version": version}
+        prev = {
+            "location": "loc1",
+            "_last_modified": "2025-01-01",
+            "validator_version": version,
+        }
         mock_retrieve.return_value = [record]
         results = _build_results(["loc1"], {"loc1": prev}, force=False)
         self.assertEqual(results, [prev])

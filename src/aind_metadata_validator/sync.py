@@ -3,7 +3,7 @@
 from aind_metadata_validator.metadata_validator import validate_metadata
 from aind_metadata_validator import __version__ as version
 from aind_data_access_api.document_db import MetadataDbClient
-from zombie_squirrel import custom
+from biodata_cache import custom
 import pandas as pd
 import os
 import logging
@@ -73,7 +73,7 @@ def _build_results(
     """Fetch records in chunks and validate, skipping unchanged records."""
     results = []
     for i in range(0, len(uniquelocations), CHUNK_SIZE):
-        chunk = uniquelocations[i: i + CHUNK_SIZE]
+        chunk = uniquelocations[i : i + CHUNK_SIZE]
         response = client.retrieve_docdb_records(
             filter_query={"location": {"$in": chunk}},
             limit=0,

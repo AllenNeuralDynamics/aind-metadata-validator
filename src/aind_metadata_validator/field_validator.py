@@ -1,4 +1,5 @@
 """Functions for validating metadata fields against expected classes and types"""
+
 from enum import Enum
 import types
 from typing import Annotated, Optional, Union, get_args, get_origin

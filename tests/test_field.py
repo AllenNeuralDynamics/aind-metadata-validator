@@ -187,8 +187,10 @@ class TestValidateFieldMetadata(unittest.TestCase):
 
     def test_try_instantiate_dict(self):
         """Test that try_instantiate can handle dicts and returns PRESENT if instantiation fails."""
+
         class DummyClass:
             """Dummy class for testing try_instantiate with dict data."""
+
             def __init__(self, field):
                 """Initialize DummyClass with a field."""
                 self.field = field
@@ -219,7 +221,9 @@ class TestValidateFieldMetadata(unittest.TestCase):
     def test_validate_field_metadata_non_dict_data(self):
         """Non-dict data returns all-MISSING for every expected field."""
         result = validate_field_metadata("subject", "this is not a dict")
-        self.assertTrue(all(v == MetadataState.MISSING for v in result.values()))
+        self.assertTrue(
+            all(v == MetadataState.MISSING for v in result.values())
+        )
 
     def test_validate_field_metadata_unknown_field(self):
         """Fields not present in the schema mapping are silently skipped."""

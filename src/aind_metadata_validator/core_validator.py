@@ -1,4 +1,5 @@
 """Core metadata validation functions"""
+
 from aind_metadata_validator.utils import MetadataState
 from aind_metadata_validator.mappings import FIRST_LAYER_MAPPING
 from aind_metadata_validator.utils import FileRequirement

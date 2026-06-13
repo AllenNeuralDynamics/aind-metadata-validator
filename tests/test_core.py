@@ -61,6 +61,7 @@ class CoreValidatorTest(unittest.TestCase):
 
         class _FakeReq:
             """Fake requirement class that is not a valid FileRequirement."""
+
             pass
 
         self.assertRaises(
